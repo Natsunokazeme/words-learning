@@ -1,3 +1,6 @@
+#project planning 1.导入单词 2.显示模式
+2.1 多选模式，可通过 checkbox 勾选单词,是否显示汉语，是否显示英语，是否显示英语翻译， 3.单词行 选择 输入单词 单词(隐藏，点击显示) 英语释义(悬浮显示,点击显示) 汉语翻译(悬浮显示) 英语发音(悬浮显示) 词根&用法(悬浮显示) 4.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
