@@ -1,10 +1,11 @@
 import React from 'react'
 import './App.scss'
+import './styles/tailwind.scss';
 import MainPage from './components/MainPage/MainPage'
 
 function App() {
   return (
-    <div className='App'>
+    <div className='App bg-slate-400'>
       <MainPage></MainPage>
     </div>
   )
