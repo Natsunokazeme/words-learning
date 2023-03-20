@@ -11,3 +11,5 @@
 10. 近义词
 11. 
 todo: 支持日语学习，
+
+tech stack: react react-router tailwindcss scss 
