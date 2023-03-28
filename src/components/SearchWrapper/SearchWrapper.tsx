@@ -11,8 +11,17 @@ const SearchWrapper: FC<SearchWrapperProps> = (prop: SearchWrapperProps) => {
   const searchValueRef = useRef<string>('')
   const search = () => {
     // TODO: search api
-    prop.searchCallback(searchValueRef.current)
+    fetch('http://localhost:3010', {
+      method: 'GET',
+    })
+      .then((response) => {
+        return response.json()
+      })
+      .then((response) => {
+        console.log(response)
+      })
   }
+
   return (
     <Typography variant='h6' component='div' sx={{flexGrow: 1}}>
       <Tooltip arrow title='search'>
