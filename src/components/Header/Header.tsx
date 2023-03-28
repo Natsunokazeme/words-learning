@@ -1,54 +1,42 @@
 import {
   AppBar,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
-  InputBase,
+  TextField,
   Toolbar,
   Tooltip,
-  Typography,
 } from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu'
 import './Header.scss'
-import {useRef, useState} from 'react'
-import {Login, Search, Upload} from '@mui/icons-material'
+import {useEffect, useState} from 'react'
+import {AccountCircle, CameraAlt, NearMe, Upload} from '@mui/icons-material'
+import SearchWrapper from '../SearchWrapper/SearchWrapper'
 
 const Header = (props: any) => {
-  // const [searchValue, setSearchValue] = useState('')
+  const [showLogin, setShowLogin] = useState(false)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [showNavigation, setShowNavigation] = useState(false)
 
-  const SearchWrapper = () => {
-    const searchValueRef = useRef<string>('')
-    const search = () => {
-      // TODO: search api
-      console.log('search', searchValueRef.current)
-    }
-    return (
-      <Typography variant='h6' component='div' sx={{flexGrow: 1}}>
-        <Tooltip arrow title='search'>
-          <IconButton
-            type='button'
-            sx={{p: '10px'}}
-            aria-label='search'
-            onClick={() => search()}
-          >
-            <Search />
-          </IconButton>
-        </Tooltip>
-        <InputBase
-          sx={{ml: 1, flex: 1}}
-          placeholder='Search'
-          inputProps={{'aria-label': 'search'}}
-          style={{width: 'calc(100% - 100px)'}}
-          padding-left='50px'
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              search()
-            }
-          }}
-          onChange={(e) => {
-            searchValueRef.current = e.target.value
-          }}
-        />
-      </Typography>
-    )
+  useEffect(() => {
+    console.log('showNavigation', showNavigation)
+  }, [showNavigation])
+
+  const handleClose = () => {
+    setShowLogin(false)
+  }
+
+  const handleLogin = () => {
+    //TODO: login api
+    console.log('login', username, password)
+    setShowLogin(false)
+  }
+
+  const handleNavigation = (status?: boolean) => {
+    setShowNavigation(status ?? !showNavigation)
   }
 
   return (
@@ -59,20 +47,38 @@ const Header = (props: any) => {
             size='large'
             edge='start'
             color='inherit'
-            aria-label='menu'
+            aria-label='show navigation'
             sx={{mr: 2}}
+            onClick={() => handleNavigation()}
+            onMouseEnter={() => handleNavigation(true)}
           >
-            <MenuIcon />
+            <NearMe />
           </IconButton>
-          <SearchWrapper />
-          <Tooltip arrow title='upload'>
+          <SearchWrapper
+            searchCallback={(value) => {
+              console.warn(value)
+            }}
+          />
+          <Tooltip arrow title='import book'>
             <IconButton
               size='large'
               edge='start'
               color='inherit'
-              aria-label='login'
+              aria-label='import book'
+              onClick={() => console.warn('import book')}
             >
               <Upload />
+            </IconButton>
+          </Tooltip>
+          <Tooltip arrow title='scan words'>
+            <IconButton
+              size='large'
+              edge='start'
+              color='inherit'
+              aria-label='scan words'
+              onClick={() => console.warn('scan words')}
+            >
+              <CameraAlt />
             </IconButton>
           </Tooltip>
           <Tooltip arrow title='login'>
@@ -81,10 +87,44 @@ const Header = (props: any) => {
               edge='start'
               color='inherit'
               aria-label='login'
+              onClick={() => setShowLogin(true)}
             >
-              <Login />
+              <AccountCircle />
             </IconButton>
           </Tooltip>
+          <Dialog
+            open={showLogin}
+            onClose={() => {
+              setShowLogin(false)
+            }}
+          >
+            <DialogTitle>Login</DialogTitle>
+            <DialogContent>
+              <TextField
+                autoFocus
+                margin='dense'
+                id='username'
+                label='Username'
+                type='text'
+                fullWidth
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <TextField
+                margin='dense'
+                id='password'
+                label='Password'
+                type='password'
+                fullWidth
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleLogin}>Login</Button>
+            </DialogActions>
+          </Dialog>
         </Toolbar>
       </AppBar>
     </>
