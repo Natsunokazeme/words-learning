@@ -4,6 +4,7 @@ import {useEffect, useState} from 'react'
 import {AccountCircle, CameraAlt, NearMe, Upload} from '@mui/icons-material'
 import SearchWrapper from '../SearchWrapper/SearchWrapper'
 import LoginDialog from '../LoginDialog/LoginDialog'
+import {NavLink} from 'react-router-dom'
 
 const Header = (props: any) => {
   const [showLogin, setShowLogin] = useState(false)
@@ -86,7 +87,9 @@ const Header = (props: any) => {
               aria-label='scan words'
               onClick={() => console.warn('scan words')}
             >
-              <CameraAlt />
+              <NavLink className={'text-xs'} to='camera' end>
+                <CameraAlt />
+              </NavLink>
             </IconButton>
           </Tooltip>
           <Tooltip arrow title='login'>
