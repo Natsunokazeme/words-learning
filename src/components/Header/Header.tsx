@@ -1,42 +1,50 @@
-import {
-  AppBar,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  TextField,
-  Toolbar,
-  Tooltip,
-} from '@mui/material'
+import {AppBar, IconButton, Toolbar, Tooltip} from '@mui/material'
 import './Header.scss'
 import {useEffect, useState} from 'react'
 import {AccountCircle, CameraAlt, NearMe, Upload} from '@mui/icons-material'
 import SearchWrapper from '../SearchWrapper/SearchWrapper'
+import LoginDialog from '../LoginDialog/LoginDialog'
 
 const Header = (props: any) => {
   const [showLogin, setShowLogin] = useState(false)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [showNavigation, setShowNavigation] = useState(false)
 
   useEffect(() => {
     console.log('showNavigation', showNavigation)
   }, [showNavigation])
 
-  const handleClose = () => {
-    setShowLogin(false)
-  }
-
-  const handleLogin = () => {
+  const handleLogin = (username: string, password: string) => {
     //TODO: login api
-    console.log('login', username, password)
-    setShowLogin(false)
+    fetch('http://localhost:3010/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    })
+      .then((response) => response.text())
+      .then((response) => {
+        console.log(response)
+        setShowLogin(false)
+      })
   }
 
   const handleNavigation = (status?: boolean) => {
     setShowNavigation(status ?? !showNavigation)
+  }
+
+  const handleSearch = (value: string) => {
+    // TODO: search api
+    fetch(`http://localhost:3010/search?id=${value}`, {
+      method: 'GET',
+    })
+      .then((response) => response.text())
+      .then((response) => {
+        console.log(response)
+      })
   }
 
   return (
@@ -56,7 +64,7 @@ const Header = (props: any) => {
           </IconButton>
           <SearchWrapper
             searchCallback={(value) => {
-              console.warn(value)
+              handleSearch(value)
             }}
           />
           <Tooltip arrow title='import book'>
@@ -92,39 +100,11 @@ const Header = (props: any) => {
               <AccountCircle />
             </IconButton>
           </Tooltip>
-          <Dialog
-            open={showLogin}
-            onClose={() => {
-              setShowLogin(false)
-            }}
-          >
-            <DialogTitle>Login</DialogTitle>
-            <DialogContent>
-              <TextField
-                autoFocus
-                margin='dense'
-                id='username'
-                label='Username'
-                type='text'
-                fullWidth
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <TextField
-                margin='dense'
-                id='password'
-                label='Password'
-                type='password'
-                fullWidth
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={handleLogin}>Login</Button>
-            </DialogActions>
-          </Dialog>
+          <LoginDialog
+            showLogin={showLogin}
+            setShowLogin={setShowLogin}
+            handleLogin={handleLogin}
+          ></LoginDialog>
         </Toolbar>
       </AppBar>
     </>
