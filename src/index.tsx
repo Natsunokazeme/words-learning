@@ -3,14 +3,18 @@ import ReactDOM from 'react-dom/client'
 import './index.scss'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
-import { BrowserRouter as Router } from 'react-router-dom';
-
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
+import CameraScan from './components/CameraScan/CameraScan'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <React.StrictMode>
     <Router>
-     <App/>
+      <Routes>
+        <Route path='/' element={<App />}></Route>
+        <Route path='/camera' element={<CameraScan />}></Route>
+        <Route path='*' element={<div>404</div>}></Route>
+      </Routes>
     </Router>
   </React.StrictMode>
 )
