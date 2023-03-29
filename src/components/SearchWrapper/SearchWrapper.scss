@@ -1,2 +1,8 @@
-.SearchWrapper {
+.search-wrapper {
+  .MuiInputBase-root {
+    width: calc(100% - 100px);
+  }
+  .search-input {
+    @apply text-white placeholder-white;
+  }
 }

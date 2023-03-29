@@ -11,19 +11,16 @@ const SearchWrapper: FC<SearchWrapperProps> = (prop: SearchWrapperProps) => {
   const searchValueRef = useRef<string>('')
   const search = () => {
     // TODO: search api
-    fetch('http://localhost:3010', {
-      method: 'GET',
-    })
-      .then((response) => {
-        return response.json()
-      })
-      .then((response) => {
-        console.log(response)
-      })
+    prop.searchCallback(searchValueRef.current)
   }
 
   return (
-    <Typography variant='h6' component='div' sx={{flexGrow: 1}}>
+    <Typography
+      className='search-wrapper'
+      variant='h6'
+      component='div'
+      sx={{flexGrow: 1}}
+    >
       <Tooltip arrow title='search'>
         <IconButton
           type='button'
@@ -38,9 +35,12 @@ const SearchWrapper: FC<SearchWrapperProps> = (prop: SearchWrapperProps) => {
       <InputBase
         sx={{ml: 1, flex: 1}}
         placeholder='Search'
+        type='search'
         inputProps={{'aria-label': 'search'}}
         color='primary'
-        style={{width: 'calc(100% - 100px)'}}
+        classes={{
+          input: 'search-input',
+        }}
         padding-left='50px'
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
