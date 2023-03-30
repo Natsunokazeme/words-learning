@@ -10,7 +10,6 @@ interface SearchWrapperProps {
 const SearchWrapper: FC<SearchWrapperProps> = (prop: SearchWrapperProps) => {
   const searchValueRef = useRef<string>('')
   const search = () => {
-    // TODO: search api
     prop.searchCallback(searchValueRef.current)
   }
 

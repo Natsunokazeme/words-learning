@@ -1,4 +1,12 @@
-import {AppBar, IconButton, Toolbar, Tooltip} from '@mui/material'
+import {
+  Alert,
+  AppBar,
+  Avatar,
+  IconButton,
+  Snackbar,
+  Toolbar,
+  Tooltip,
+} from '@mui/material'
 import './Header.scss'
 import {useEffect, useState} from 'react'
 import {AccountCircle, CameraAlt, NearMe, Upload} from '@mui/icons-material'
@@ -6,9 +14,20 @@ import SearchWrapper from '../SearchWrapper/SearchWrapper'
 import LoginDialog from '../LoginDialog/LoginDialog'
 import {NavLink} from 'react-router-dom'
 
+interface SnackbarConfig {
+  message: string
+  type: 'success' | 'info' | 'warning' | 'error'
+}
+
 const Header = (props: any) => {
   const [showLogin, setShowLogin] = useState(false)
   const [showNavigation, setShowNavigation] = useState(false)
+  const [showSnackbar, setShowSnackbar] = useState(false)
+  const [snackConfig, setSnackConfig] = useState<SnackbarConfig>({
+    message: '',
+    type: 'success',
+  })
+  let avatar = localStorage.getItem('avatar')
 
   useEffect(() => {
     console.log('showNavigation', showNavigation)
@@ -26,15 +45,27 @@ const Header = (props: any) => {
         password,
       }),
     })
-      .then((response) => response.text())
+      .then((response) => response.json())
       .then((response) => {
-        console.log(response)
+        avatar = response.imgurl
+        localStorage.setItem('avatar', avatar ?? '')
+        showSnackbarCallback({
+          message: 'Login successfully',
+          type: 'success',
+        })
         setShowLogin(false)
       })
   }
 
-  const handleNavigation = (status?: boolean) => {
-    setShowNavigation(status ?? !showNavigation)
+  const handleNavigation = () => {
+    fetch('http://realip.cc', {
+      method: 'GET',
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response)
+        setShowNavigation(!showNavigation)
+      })
   }
 
   const handleSearch = (value: string) => {
@@ -42,10 +73,21 @@ const Header = (props: any) => {
     fetch(`http://localhost:3010/search?id=${value}`, {
       method: 'GET',
     })
-      .then((response) => response.text())
+      .then((response) => response.json())
       .then((response) => {
         console.log(response)
+        if (response.result.code === 404) {
+          showSnackbarCallback({
+            message: 'search failed, word not found',
+            type: 'error',
+          })
+        }
       })
+  }
+
+  const showSnackbarCallback = (config: SnackbarConfig) => {
+    setSnackConfig(config)
+    setShowSnackbar(true)
   }
 
   return (
@@ -59,7 +101,6 @@ const Header = (props: any) => {
             aria-label='show navigation'
             sx={{mr: 2}}
             onClick={() => handleNavigation()}
-            onMouseEnter={() => handleNavigation(true)}
           >
             <NearMe />
           </IconButton>
@@ -92,23 +133,41 @@ const Header = (props: any) => {
               </NavLink>
             </IconButton>
           </Tooltip>
-          <Tooltip arrow title='login'>
-            <IconButton
-              size='large'
-              edge='start'
-              color='inherit'
-              aria-label='login'
-              onClick={() => setShowLogin(true)}
-            >
-              <AccountCircle />
-            </IconButton>
-          </Tooltip>
+          {avatar && avatar !== '' ? (
+            <Avatar alt='user avatar' src={avatar}></Avatar>
+          ) : (
+            <Tooltip arrow title='login'>
+              <IconButton
+                size='large'
+                edge='start'
+                color='inherit'
+                aria-label='login'
+                onClick={() => setShowLogin(true)}
+              >
+                <AccountCircle />
+              </IconButton>
+            </Tooltip>
+          )}
           <LoginDialog
             showLogin={showLogin}
             setShowLogin={setShowLogin}
             handleLogin={handleLogin}
           ></LoginDialog>
         </Toolbar>
+        <Snackbar
+          anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+          open={showSnackbar}
+          onClose={() => setShowSnackbar(false)}
+          autoHideDuration={4000}
+        >
+          <Alert
+            onClose={() => setShowSnackbar(false)}
+            severity={snackConfig.type}
+            sx={{width: '100%'}}
+          >
+            {snackConfig.message}
+          </Alert>
+        </Snackbar>
       </AppBar>
     </>
   )
