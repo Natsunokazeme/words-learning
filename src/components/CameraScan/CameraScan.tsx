@@ -1,11 +1,12 @@
-import React, {FC, useRef} from 'react'
+import React, {FC} from 'react'
 import './CameraScan.scss'
 import {useEffect} from 'react'
+import {CircularProgress} from '@mui/material'
 
 interface CameraScanProps {}
 
 const CameraScan: FC<CameraScanProps> = () => {
-  // const videoRef = useRef<HTMLVideoElement>(null)
+  const [loading, setLoading] = React.useState(true)
   useEffect(() => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       console.log('getUserMedia not supported')
@@ -16,16 +17,17 @@ const CameraScan: FC<CameraScanProps> = () => {
       const video = document.getElementById('video') as HTMLVideoElement
       video.srcObject = stream
       video.onloadeddata = () => {
+        setLoading(false)
         video.play()
       }
-      console.log('CameraScan Component')
     })
   }, [])
+
   return (
-    <>
-      <div>CameraScan Component</div>
-      <video id='video'></video>
-    </>
+    <div className='flex items-center justify-center'>
+      {loading && <CircularProgress size={100} />}
+      <video id='video' className='h-screen w-screen'></video>
+    </div>
   )
 }
 

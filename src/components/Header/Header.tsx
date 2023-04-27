@@ -13,6 +13,7 @@ import {AccountCircle, CameraAlt, NearMe, Upload} from '@mui/icons-material'
 import SearchWrapper from '../SearchWrapper/SearchWrapper'
 import LoginDialog from '../LoginDialog/LoginDialog'
 import {NavLink} from 'react-router-dom'
+import * as apis from '../../api/api'
 
 interface SnackbarConfig {
   message: string
@@ -34,20 +35,14 @@ const Header = (props: any) => {
   }, [showNavigation])
 
   const handleLogin = (username: string, password: string) => {
-    //TODO: login api
-    fetch('http://localhost:3010/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    apis
+      .post('/login', {
         username,
         password,
-      }),
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        avatar = response.imgurl
+      })
+      .then((response: any) => {
+        const data = response.data
+        avatar = data.imgurl
         localStorage.setItem('avatar', avatar ?? '')
         showSnackbarCallback({
           message: 'Login successfully',
@@ -55,36 +50,73 @@ const Header = (props: any) => {
         })
         setShowLogin(false)
       })
+      .catch((error) => {
+        console.log(error)
+        showSnackbarCallback({
+          message: error.message,
+          type: 'error',
+        })
+      })
   }
 
   const handleNavigation = () => {
-    fetch('http://realip.cc', {
-      method: 'GET',
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        console.log(response)
-        setShowNavigation(!showNavigation)
-      })
+    // fetch('http://realip.cc', {
+    //   method: 'GET',
+    // })
+    //   .then((response) => response.json())
+    //   .then((response) => {
+    //     console.log(response)
+    //     setShowNavigation(!showNavigation)
+    //   })
   }
 
   const handleSearch = (value: string) => {
+    if (!value || value.trim() === '') {
+      return
+    }
     // TODO: search api
-    fetch(`http://localhost:3010/search?id=${value}`, {
-      method: 'GET',
+    apis.get(`/search?id=${value}`).then((response: any) => {
+      console.log(response)
+      if (response.result.code === 404) {
+        showSnackbarCallback({
+          message: 'search failed, word not found',
+          type: 'error',
+        })
+      }
     })
-      .then((response) => response.json())
-      .then((response) => {
-        console.log(response)
-        if (response.result.code === 404) {
-          showSnackbarCallback({
-            message: 'search failed, word not found',
-            type: 'error',
-          })
-        }
-      })
   }
 
+  const handleImportBook = () => {
+    console.warn('import book')
+    apis
+      .post(
+        '/word/create',
+        {
+          text: 'hello',
+          enTranslation: 'hello',
+          zhTranslation: '你好',
+          pronunciation: 'hello',
+          example: 'hello world',
+          imageUrl: 'https://www.baidu.com/img/flexible/logo/pc/result.png',
+          audioSrc: 'https://www.w3school.com.cn/i/song.mp3',
+          extra: 'extra',
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response)
+        // if (response.result.code === 404) {
+        //   showSnackbarCallback({
+        //     message: 'search failed, word not found',
+        //     type: 'error',
+        //   })
+        // }
+      })
+  }
   const showSnackbarCallback = (config: SnackbarConfig) => {
     setSnackConfig(config)
     setShowSnackbar(true)
@@ -115,7 +147,7 @@ const Header = (props: any) => {
               edge='start'
               color='inherit'
               aria-label='import book'
-              onClick={() => console.warn('import book')}
+              onClick={() => handleImportBook()}
             >
               <Upload />
             </IconButton>

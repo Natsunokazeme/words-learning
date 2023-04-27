@@ -1,0 +1,6 @@
+.loading-wrapper {
+  @apply w-screen h-screen fixed top-0 left-0 flex items-center justify-center z-50 bg-white bg-opacity-50;
+  .loading {
+    @apply animate-spin w-20 h-20 border-8 border-gray-200 rounded-full border-t-white;
+  }
+}
