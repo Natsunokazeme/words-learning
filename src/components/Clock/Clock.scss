@@ -1,0 +1,6 @@
+.active {
+  @apply text-purple-500 bg-white;
+}
+.hours {
+  @apply rounded-full aspect-square w-[300px] bg-yellow-500 absolute m-auto top-0 bottom-0 left-0 right-0;
+}

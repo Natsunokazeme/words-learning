@@ -1,6 +1,8 @@
 import Header from '../../components/Header/Header'
 import './MainPage.scss'
 import * as Models from '../../models'
+import Clock from '../../components/Clock/Clock'
+import {Fragment} from 'react'
 
 const MainPage = (props: any) => {
   const wordsData: Models.Word[] = [
@@ -36,7 +38,7 @@ const MainPage = (props: any) => {
   return (
     <>
       <Header></Header>
-      {wordsData.map((word: Models.Word) => {
+      {/* {wordsData.map((word: Models.Word) => {
         return (
           <div key={word.id} className='word-wrapper'>
             <div className='word'>
@@ -52,7 +54,10 @@ const MainPage = (props: any) => {
             </div>
           </div>
         )
-      })}
+      })} */}
+      <div className='main-body'>
+        <Clock></Clock>
+      </div>
     </>
   )
 }
