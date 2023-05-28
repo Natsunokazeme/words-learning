@@ -60,14 +60,10 @@ const Header = (props: any) => {
   }
 
   const handleNavigation = () => {
-    // fetch('http://realip.cc', {
-    //   method: 'GET',
-    // })
-    //   .then((response) => response.json())
-    //   .then((response) => {
-    //     console.log(response)
-    //     setShowNavigation(!showNavigation)
-    //   })
+    apis.get('/IPAdress').then((response) => {
+      console.log(response)
+      setShowNavigation(!showNavigation)
+    })
   }
 
   const handleSearch = (value: string) => {
@@ -124,7 +120,7 @@ const Header = (props: any) => {
 
   return (
     <>
-      <AppBar position='fixed'>
+      <AppBar position='sticky'>
         <Toolbar>
           <IconButton
             size='large'
