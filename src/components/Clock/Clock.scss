@@ -1,6 +1,21 @@
-.active {
-  @apply text-purple-500 bg-white;
-}
-.hours {
-  @apply rounded-full aspect-square w-[300px] bg-yellow-500 absolute m-auto top-0 bottom-0 left-0 right-0;
+.clock {
+  @apply relative w-full h-screen;
+
+  .hours,
+  .minutes,
+  .seconds {
+    @apply rounded-full aspect-square absolute m-auto top-0 bottom-0 left-0 right-0;
+  }
+
+  .hours {
+    @apply w-[300px];
+  }
+
+  .minutes {
+    @apply w-[600px];
+  }
+
+  .seconds {
+    @apply w-[800px];
+  }
 }
