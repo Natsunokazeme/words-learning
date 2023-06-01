@@ -8,6 +8,9 @@ const Clock = () => {
     setInterval(() => {
       setCurTime(new Date())
     }, 1000)
+    return () => {
+      localStorage.setItem('lastTime', curTime.toISOString())
+    }
   }, [])
 
   const circleElements = (
@@ -17,10 +20,11 @@ const Clock = () => {
     label?: string
   ) =>
     Array.from({length: size}, (_, index) => (
-      <span
-        className='inline-block bg-transparent w-16 h-4 absolute top-0 bottom-0 left-0 right-0 m-auto transition-transform border-0'
+      <div
+        className='inline-block bg-transparent w-16 h-4 absolute top-0 bottom-0 left-0 right-0 m-auto transition-transform border-0 will-change-transform'
         style={{
           color: index === accurate ? 'white' : 'grey',
+          transitionDuration: accurate === 0 ? '0s' : '1s',
           transform: `translate(${
             Math.sin(((index - accurate) / size + 1 / 4) * 2 * Math.PI) * radius
           }px,${
@@ -32,7 +36,7 @@ const Clock = () => {
       >
         {index.toString().padStart(2, '0')}
         {label}
-      </span>
+      </div>
     ))
 
   return (
@@ -41,10 +45,10 @@ const Clock = () => {
       {curTime.getSeconds()}
       <div className='clock'>
         <div className='seconds'>
-          {circleElements(60, 200, curTime.getSeconds(), '秒')}
+          {circleElements(60, 250, curTime.getSeconds(), '秒')}
         </div>
         <div className='minutes'>
-          {circleElements(60, 150, curTime.getMinutes(), '分')}
+          {circleElements(60, 200, curTime.getMinutes(), '分')}
         </div>
         <div className='hours'>
           {circleElements(24, 100, curTime.getHours(), '时')}

@@ -1,39 +1,44 @@
 import Header from '../../components/Header/Header'
 import './MainPage.scss'
-import * as Models from '../../models'
 import Clock from '../../components/Clock/Clock'
-import {Fragment} from 'react'
 
 const MainPage = (props: any) => {
-  const wordsData: Models.Word[] = [
-    {
-      id: 1,
-      text: 'hello',
-      enTranslation: 'hello',
-      zhTranslation: '你好',
-      pronunciation: '[həˈləʊ]',
-      imageUrl:
-        'https://cdn.pixabay.com/photo/2017/09/25/13/12/dog-2785074__340.jpg',
-      audioSrc: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-      example: 'Hello, how are you?',
-      extra: '',
-      createdTime: new Date(),
-      updatedTime: new Date(),
-    },
-    {
-      id: 2,
-      text: 'world',
-      enTranslation: 'world',
-      zhTranslation: '世界',
-      pronunciation: '[wɜːld]',
-      imageUrl: 'https://cdn2.thecatapi.com/images/2a5.jpg',
-      audioSrc: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-      example: 'Hello, world.',
-      extra: '',
-      createdTime: new Date(),
-      updatedTime: new Date(),
-    },
-  ]
+  const lastTime = localStorage.getItem('lastTime') ?? ''
+  // useEffect(() => {
+  //   lastTime = localStorage.getItem('lastTime') ?? ''
+  //   if (lastTime) {
+  //     new Date(lastTime)
+  //   }
+  // }, [])
+  // const wordsData: Models.Word[] = [
+  //   {
+  //     id: 1,
+  //     text: 'hello',
+  //     enTranslation: 'hello',
+  //     zhTranslation: '你好',
+  //     pronunciation: '[həˈləʊ]',
+  //     imageUrl:
+  //       'https://cdn.pixabay.com/photo/2017/09/25/13/12/dog-2785074__340.jpg',
+  //     audioSrc: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+  //     example: 'Hello, how are you?',
+  //     extra: '',
+  //     createdTime: new Date(),
+  //     updatedTime: new Date(),
+  //   },
+  //   {
+  //     id: 2,
+  //     text: 'world',
+  //     enTranslation: 'world',
+  //     zhTranslation: '世界',
+  //     pronunciation: '[wɜːld]',
+  //     imageUrl: 'https://cdn2.thecatapi.com/images/2a5.jpg',
+  //     audioSrc: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+  //     example: 'Hello, world.',
+  //     extra: '',
+  //     createdTime: new Date(),
+  //     updatedTime: new Date(),
+  //   },
+  // ]
 
   return (
     <>
@@ -55,6 +60,8 @@ const MainPage = (props: any) => {
           </div>
         )
       })} */}
+      <div>上一次打开时间:{new Date(lastTime).toISOString()}</div>
+
       <div className='main-body'>
         <Clock></Clock>
       </div>
