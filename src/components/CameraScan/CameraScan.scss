@@ -1,1 +1,5 @@
-.CameraScan {}
+.camera-wrapper {
+  .camera {
+    transform: rotateY(0.5turn);
+  }
+}

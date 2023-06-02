@@ -3,10 +3,10 @@ import './ImagePage.scss'
 
 const ImagePage = () => {
   return (
-    <>
+    <div className='image-page'>
       image page
       <CameraScan></CameraScan>
-    </>
+    </div>
   )
 }
 
