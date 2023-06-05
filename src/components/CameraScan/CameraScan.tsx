@@ -4,29 +4,52 @@ import {useEffect} from 'react'
 import {CircularProgress} from '@mui/material'
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera'
 import DownloadIcon from '@mui/icons-material/Download'
-import ChangeCircleIcon from '@mui/icons-material/ChangeCircle'
+// import ChangeCircleIcon from '@mui/icons-material/ChangeCircle'
+import UploadIcon from '@mui/icons-material/Upload'
+
 interface CameraScanProps {}
+
+interface CustomMediaDeviceInfo
+  extends Pick<MediaDeviceInfo, Exclude<keyof MediaDeviceInfo, 'toJSON'>> {
+  active: boolean
+}
 
 const CameraScan: FC<CameraScanProps> = () => {
   const [loading, setLoading] = useState(true)
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const uploadRef = useRef<HTMLInputElement>(null)
   const [stream, setStream] = useState<MediaStream>()
-  const [cameras, setCameras] = useState<MediaDeviceInfo[]>([])
+  const [cameras, setCameras] = useState<CustomMediaDeviceInfo[]>([])
+
   useEffect(() => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       console.log('getUserMedia not supported')
       return
     }
-    navigator.mediaDevices.enumerateDevices().then((mediaDevices) => {
+    navigator.mediaDevices.enumerateDevices().then(async (mediaDevices) => {
       setCameras(
-        mediaDevices.filter((devices) => devices.kind === 'videoinput')
+        mediaDevices
+          .filter((devices: MediaDeviceInfo) => devices.kind === 'videoinput')
+          .map((device, index) => ({
+            kind: device.kind,
+            label: device.label,
+            deviceId: device.deviceId,
+            groupId: device.groupId,
+            active: index === 0 ? true : false,
+          }))
       )
     })
-    startCamera({
-      video: true,
-    })
   }, [])
+
+  useEffect(() => {
+    // update custom camera
+    startCamera({
+      video: {
+        deviceId: {exact: cameras.find((camera) => camera.active)?.deviceId},
+      },
+    })
+  }, [cameras])
 
   const startCamera = (constraints: MediaStreamConstraints) => {
     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
@@ -69,22 +92,49 @@ const CameraScan: FC<CameraScanProps> = () => {
 
   const changeCamera = async (id: string) => {
     await stopCamera()
-    startCamera({
-      video: {
-        deviceId: {exact: id},
-      },
-    })
+    setCameras(
+      cameras.map((camera) => ({
+        ...camera,
+        active: camera.deviceId === id,
+      }))
+    )
   }
 
   const stopCamera = () => {
+    setLoading(true)
     stream?.getTracks().forEach((track) => track.stop())
+  }
+
+  const uploadImage = () => {
+    const upload = uploadRef.current as HTMLInputElement
+    upload.click()
+  }
+
+  const drawCanvas = (uploadedImage: File) => {
+    const canvas = canvasRef.current as HTMLCanvasElement
+    const ctx = canvas.getContext('2d')
+    if (ctx && uploadedImage) {
+      const img = new Image()
+      img.src = URL.createObjectURL(uploadedImage)
+      img.onload = () => {
+        canvas.height = img.height
+        canvas.width = img.width
+        ctx.drawImage(img, 0, 0)
+      }
+    }
   }
 
   return (
     <>
-      <div className='camera-wrapper flex gap-5'>
-        {loading && <CircularProgress size={100} />}
-        <video id='video' ref={videoRef} className='max-w-full  camera'></video>
+      {loading && (
+        <CircularProgress size={100} className='fixed left-1/2 top-1/2' />
+      )}
+      <div className={`camera-wrapper flex gap-5 ${loading ? 'hidden' : ''}`}>
+        <video
+          id='video'
+          ref={videoRef}
+          className={`max-w-full camera`}
+        ></video>
         <canvas ref={canvasRef} className='max-w-full'></canvas>
       </div>
       <div className='actions flex justify-center mt-10'>
@@ -97,29 +147,44 @@ const CameraScan: FC<CameraScanProps> = () => {
         </button>
         <button
           onClick={() => {
+            uploadImage()
+          }}
+        >
+          <UploadIcon fontSize='large' color='primary'></UploadIcon>
+        </button>
+        <button
+          onClick={() => {
             savePhoto()
           }}
         >
           <DownloadIcon fontSize='large' color='primary'></DownloadIcon>
         </button>
-        {/* <button
-          onClick={() => {
-            changeCamera()
-          }}
-        >
-          <ChangeCircleIcon fontSize='large' color='primary'></ChangeCircleIcon>{' '}
-        </button> */}
       </div>
       {cameras.map((camera) => (
-        <div
+        <li
           onClick={() => {
             changeCamera(camera.deviceId)
           }}
+          className={`${camera.active ? 'bg-pink-100' : ''}`}
           key={camera.deviceId}
         >
-          {camera.label}
-        </div>
+          {camera.label.split('(')[0]}
+        </li>
       ))}
+      <input
+        type='file'
+        accept='image/*'
+        className='hidden'
+        ref={uploadRef}
+        onChange={(e) => {
+          const files = e.target.files
+          if (files && files.length > 0) {
+            drawCanvas(files[0])
+          } else {
+            // todo empty image
+          }
+        }}
+      />
     </>
   )
 }
