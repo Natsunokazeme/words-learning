@@ -4,6 +4,15 @@ import Clock from '../../components/Clock/Clock'
 
 const MainPage = (props: any) => {
   const lastTime = localStorage.getItem('lastTime') ?? ''
+
+  const formatTime = (time: string) => {
+    const date = new Date(time)
+    if (date.toString() === 'Invalid Date') {
+      return ''
+    }
+    return date.toISOString()
+  }
+
   // useEffect(() => {
   //   lastTime = localStorage.getItem('lastTime') ?? ''
   //   if (lastTime) {
@@ -60,7 +69,7 @@ const MainPage = (props: any) => {
           </div>
         )
       })} */}
-      <div>上一次打开时间:{new Date(lastTime).toISOString()}</div>
+      <div>上一次打开时间:{formatTime(lastTime)}</div>
 
       <div className='main-body'>
         <Clock></Clock>
