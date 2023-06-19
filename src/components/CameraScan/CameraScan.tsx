@@ -117,6 +117,7 @@ const CameraScan: FC<CameraScanProps> = () => {
       const img = new Image()
       img.src = URL.createObjectURL(uploadedImage)
       img.onload = () => {
+        console.log(img.height, img.width)
         canvas.height = img.height
         canvas.width = img.width
         ctx.drawImage(img, 0, 0)
@@ -124,12 +125,22 @@ const CameraScan: FC<CameraScanProps> = () => {
     }
   }
 
+  //todo cropper for canvas
+  //todo use second canvas for cropper and compress them into one
+  //todo count down for camera
+  // todo empty image
+  //todo hide camera after canvas is loaded
+
   return (
     <>
       {loading && (
         <CircularProgress size={100} className='fixed left-1/2 top-1/2' />
       )}
-      <div className={`camera-wrapper flex gap-5 ${loading ? 'hidden' : ''}`}>
+      <div
+        className={`camera-wrapper flex items-center gap-5 ${
+          loading ? 'hidden' : ''
+        }`}
+      >
         <video
           id='video'
           ref={videoRef}
