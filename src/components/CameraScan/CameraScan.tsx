@@ -6,6 +6,8 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera'
 import DownloadIcon from '@mui/icons-material/Download'
 // import ChangeCircleIcon from '@mui/icons-material/ChangeCircle'
 import UploadIcon from '@mui/icons-material/Upload'
+import Cropper, {ReactCropperElement} from 'react-cropper'
+import 'cropperjs/dist/cropper.css'
 
 interface CameraScanProps {}
 
@@ -19,6 +21,8 @@ const CameraScan: FC<CameraScanProps> = () => {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const uploadRef = useRef<HTMLInputElement>(null)
+  const cropperRef = useRef<ReactCropperElement>(null)
+  const [imgUrl, setImgUrl] = useState('')
   const [stream, setStream] = useState<MediaStream>()
   const [cameras, setCameras] = useState<CustomMediaDeviceInfo[]>([])
 
@@ -27,7 +31,7 @@ const CameraScan: FC<CameraScanProps> = () => {
       console.log('getUserMedia not supported')
       return
     }
-    navigator.mediaDevices.enumerateDevices().then(async (mediaDevices) => {
+    navigator.mediaDevices.enumerateDevices().then((mediaDevices) => {
       setCameras(
         mediaDevices
           .filter((devices: MediaDeviceInfo) => devices.kind === 'videoinput')
@@ -117,7 +121,7 @@ const CameraScan: FC<CameraScanProps> = () => {
       const img = new Image()
       img.src = URL.createObjectURL(uploadedImage)
       img.onload = () => {
-        console.log(img.height, img.width)
+        setImgUrl(img.src)
         canvas.height = img.height
         canvas.width = img.width
         ctx.drawImage(img, 0, 0)
@@ -133,9 +137,9 @@ const CameraScan: FC<CameraScanProps> = () => {
 
   return (
     <>
-      {loading && (
+      {loading ? (
         <CircularProgress size={100} className='fixed left-1/2 top-1/2' />
-      )}
+      ) : null}
       <div
         className={`camera-wrapper flex items-center gap-5 ${
           loading ? 'hidden' : ''
@@ -147,6 +151,24 @@ const CameraScan: FC<CameraScanProps> = () => {
           className={`max-w-full camera`}
         ></video>
         <canvas ref={canvasRef} className='max-w-full'></canvas>
+        <Cropper
+          ref={cropperRef}
+          style={{height: 400, width: '100%'}}
+          zoomTo={0.5}
+          initialAspectRatio={16 / 9}
+          preview='.img-preview'
+          viewMode={1}
+          minCropBoxHeight={10}
+          minCropBoxWidth={10}
+          background={true}
+          responsive={true}
+          autoCropArea={1}
+          checkOrientation={false}
+          guides={true}
+          src={imgUrl}
+          className='cropper'
+          dragMode='crop'
+        />
       </div>
       <div className='actions flex justify-center mt-10'>
         <button
