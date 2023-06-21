@@ -22,7 +22,7 @@ const CameraScan: FC<CameraScanProps> = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const uploadRef = useRef<HTMLInputElement>(null)
   const cropperRef = useRef<ReactCropperElement>(null)
-  const [imgUrl, setImgUrl] = useState('')
+  const [cropperImg, setCropperImg] = useState('')
   const [stream, setStream] = useState<MediaStream>()
   const [cameras, setCameras] = useState<CustomMediaDeviceInfo[]>([])
 
@@ -71,18 +71,7 @@ const CameraScan: FC<CameraScanProps> = () => {
 
   const takePhoto = () => {
     const video = videoRef.current as HTMLVideoElement
-    const canvas = canvasRef.current as HTMLCanvasElement
-    canvas.height = video.height
-    canvas.width = video.width
-    const ctx = canvas.getContext('2d')
-    if (ctx) {
-      ctx.drawImage(video, 0, 0)
-      ctx.save()
-      ctx.scale(-1, 1)
-      ctx.drawImage(video, -video.width, 0)
-      // restore to original state
-      ctx.restore()
-    }
+    drawCanvas(video, true)
   }
 
   const savePhoto = () => {
@@ -114,19 +103,38 @@ const CameraScan: FC<CameraScanProps> = () => {
     upload.click()
   }
 
-  const drawCanvas = (uploadedImage: File) => {
-    const canvas = canvasRef.current as HTMLCanvasElement
-    const ctx = canvas.getContext('2d')
-    if (ctx && uploadedImage) {
+  const convertFileToImage = (file: File) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => {
       const img = new Image()
-      img.src = URL.createObjectURL(uploadedImage)
+      img.src = reader.result as string
       img.onload = () => {
-        setImgUrl(img.src)
-        canvas.height = img.height
-        canvas.width = img.width
-        ctx.drawImage(img, 0, 0)
+        drawCanvas(img)
       }
     }
+  }
+
+  const drawCanvas = (
+    element: HTMLImageElement | HTMLVideoElement,
+    mirror?: boolean
+  ) => {
+    const canvas = canvasRef.current as HTMLCanvasElement
+    const ctx = canvas.getContext('2d')
+    if (ctx) {
+      canvas.height = element.height
+      canvas.width = element.width
+      ctx.drawImage(element, 0, 0)
+      if (mirror) {
+        ctx.save()
+        ctx.scale(-1, 1)
+        ctx.drawImage(element, -element.width, 0)
+        // restore to original state
+        ctx.restore()
+      }
+    }
+    setCropperImg(canvas.toDataURL())
+    return canvas
   }
 
   //todo cropper for canvas
@@ -165,7 +173,7 @@ const CameraScan: FC<CameraScanProps> = () => {
           autoCropArea={1}
           checkOrientation={false}
           guides={true}
-          src={imgUrl}
+          src={cropperImg}
           className='cropper'
           dragMode='crop'
         />
@@ -212,7 +220,7 @@ const CameraScan: FC<CameraScanProps> = () => {
         onChange={(e) => {
           const files = e.target.files
           if (files && files.length > 0) {
-            drawCanvas(files[0])
+            convertFileToImage(files[0])
           } else {
             // todo empty image
           }
