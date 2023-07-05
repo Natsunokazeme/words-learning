@@ -73,6 +73,7 @@ const MainPage = (props: any) => {
 
       <div className='main-body'>
         <Clock></Clock>
+        <a href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'>magic</a>
       </div>
     </>
   )
