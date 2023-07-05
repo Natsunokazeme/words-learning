@@ -6,8 +6,9 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera'
 import DownloadIcon from '@mui/icons-material/Download'
 // import ChangeCircleIcon from '@mui/icons-material/ChangeCircle'
 import UploadIcon from '@mui/icons-material/Upload'
-import Cropper, {ReactCropperElement} from 'react-cropper'
+
 import 'cropperjs/dist/cropper.css'
+import CropperModal from '../CropperModal/CropperModal'
 
 interface CameraScanProps {}
 
@@ -21,14 +22,14 @@ const CameraScan: FC<CameraScanProps> = () => {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const uploadRef = useRef<HTMLInputElement>(null)
-  const cropperRef = useRef<ReactCropperElement>(null)
   const [cropperImg, setCropperImg] = useState('')
   const [stream, setStream] = useState<MediaStream>()
   const [cameras, setCameras] = useState<CustomMediaDeviceInfo[]>([])
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      console.log('getUserMedia not supported')
+      alert('getUserMedia not supported')
       return
     }
     navigator.mediaDevices.enumerateDevices().then((mediaDevices) => {
@@ -72,6 +73,8 @@ const CameraScan: FC<CameraScanProps> = () => {
   const takePhoto = () => {
     const video = videoRef.current as HTMLVideoElement
     drawCanvas(video, true)
+    video.hidden = true
+    setOpen(true)
   }
 
   const savePhoto = () => {
@@ -110,7 +113,12 @@ const CameraScan: FC<CameraScanProps> = () => {
       const img = new Image()
       img.src = reader.result as string
       img.onload = () => {
-        drawCanvas(img)
+        if (canvasRef.current?.width) {
+          updateCanvas(img)
+        } else {
+          drawCanvas(img)
+        }
+        setOpen(true)
       }
     }
   }
@@ -137,6 +145,27 @@ const CameraScan: FC<CameraScanProps> = () => {
     return canvas
   }
 
+  const updateCanvas = (element: HTMLImageElement | HTMLVideoElement) => {
+    const canvas = canvasRef.current as HTMLCanvasElement
+    const ctx = canvas.getContext('2d')
+    if (ctx) {
+      ctx.drawImage(element, 0, 0)
+    }
+  }
+
+  const cropImage = (imgUrl: string) => {
+    const canvas = canvasRef.current as HTMLCanvasElement
+    const ctx = canvas.getContext('2d')
+    if (ctx) {
+      const img = new Image()
+      img.src = imgUrl
+      img.onload = () => {
+        drawCanvas(img)
+        setOpen(false)
+      }
+    }
+  }
+
   //todo cropper for canvas
   //todo use second canvas for cropper and compress them into one
   //todo count down for camera
@@ -158,25 +187,12 @@ const CameraScan: FC<CameraScanProps> = () => {
           ref={videoRef}
           className={`max-w-full camera`}
         ></video>
-        <canvas ref={canvasRef} className='max-w-full'></canvas>
-        <Cropper
-          ref={cropperRef}
-          style={{height: 400, width: '100%'}}
-          zoomTo={0.5}
-          initialAspectRatio={16 / 9}
-          preview='.img-preview'
-          viewMode={1}
-          minCropBoxHeight={10}
-          minCropBoxWidth={10}
-          background={true}
-          responsive={true}
-          autoCropArea={1}
-          checkOrientation={false}
-          guides={true}
-          src={cropperImg}
-          className='cropper'
-          dragMode='crop'
-        />
+        <CropperModal
+          show={open}
+          setShow={setOpen}
+          cropperImg={cropperImg}
+          afterCrop={cropImage}
+        ></CropperModal>
       </div>
       <div className='actions flex justify-center mt-10'>
         <button
@@ -212,6 +228,10 @@ const CameraScan: FC<CameraScanProps> = () => {
           {camera.label.split('(')[0]}
         </li>
       ))}
+      <div className='canvas-container'>
+        <p>Preview</p>
+        <canvas ref={canvasRef} className='max-w-full'></canvas>
+      </div>
       <input
         type='file'
         accept='image/*'
