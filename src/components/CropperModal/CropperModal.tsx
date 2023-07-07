@@ -15,9 +15,7 @@ interface CropperModalProps {
 const CropperModal = (props: CropperModalProps) => {
   const cropperRef = useRef<ReactCropperElement>(null)
 
-  useEffect(() => {
-    console.log(props.cropperImg)
-  }, [props.cropperImg])
+  useEffect(() => {}, [props.cropperImg])
   return (
     // <div className='cropper-modal'>
     <Modal
