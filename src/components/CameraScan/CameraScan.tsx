@@ -113,11 +113,7 @@ const CameraScan: FC<CameraScanProps> = () => {
       const img = new Image()
       img.src = reader.result as string
       img.onload = () => {
-        if (canvasRef.current?.width) {
-          updateCanvas(img)
-        } else {
-          drawCanvas(img)
-        }
+        setCropperImg(img.src)
         setOpen(true)
       }
     }
@@ -238,11 +234,13 @@ const CameraScan: FC<CameraScanProps> = () => {
         className='hidden'
         ref={uploadRef}
         onChange={(e) => {
-          const files = e.target.files
+          let files = e.target.files
           if (files && files.length > 0) {
+            // only one file now
             convertFileToImage(files[0])
+            ;(uploadRef.current as HTMLInputElement).value = ''
           } else {
-            // todo empty image
+            // todo empty files
           }
         }}
       />
