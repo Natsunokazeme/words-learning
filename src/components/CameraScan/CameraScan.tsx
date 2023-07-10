@@ -16,14 +16,12 @@ interface CustomMediaDeviceInfo
 }
 
 const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
+  const countDownInitTime = 4
   const [loading, setLoading] = useState(true)
   const videoRef = useRef<HTMLVideoElement>(null)
-  // const canvasRef = useRef<HTMLCanvasElement>(null)
-  // const uploadRef = useRef<HTMLInputElement>(null)
-  // const [cropperImg, setCropperImg] = useState('')
   const [stream, setStream] = useState<MediaStream>()
   const [cameras, setCameras] = useState<CustomMediaDeviceInfo[]>([])
-  // const [open, setOpen] = useState(false)
+  const [countDownNumber, setCountDownNumber] = useState(countDownInitTime)
 
   useEffect(() => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -53,6 +51,28 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
       },
     })
   }, [cameras])
+
+  useEffect(() => {
+    let timeoutRef: NodeJS.Timeout
+    const countDown = () => {
+      if (countDownNumber > 0) {
+        timeoutRef = setTimeout(() => {
+          setCountDownNumber(countDownNumber - 1)
+        }, 1000)
+      } else {
+        setCountDownNumber(countDownInitTime)
+        takePhoto()
+      }
+    }
+
+    if (countDownNumber !== countDownInitTime) {
+      countDown()
+    }
+
+    return () => {
+      clearTimeout(timeoutRef)
+    }
+  }, [countDownNumber])
 
   const startCamera = (constraints: MediaStreamConstraints) => {
     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
@@ -96,13 +116,16 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
 
   return (
     <>
-      {/* {prop.show ? ( */}
-      <div className={`${prop.show ? '' : 'invisible'} camera-modal`}>
+      <div
+        className={`${
+          prop.show ? '' : 'invisible'
+        } camera-modal py-20 bg-black`}
+      >
         {loading ? (
           <CircularProgress size={100} className='fixed left-1/2 top-1/2' />
         ) : null}
         <div
-          className={`camera-wrapper flex items-center gap-5 ${
+          className={`camera-wrapper relative flex justify-center items-center gap-5 ${
             loading ? 'hidden' : ''
           }`}
         >
@@ -111,11 +134,22 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
             ref={videoRef}
             className={`max-w-full camera`}
           ></video>
+          {countDownNumber < countDownInitTime && countDownNumber >= 0 ? (
+            <span className='count-down font-bold absolute text-white text-5xl'>
+              {countDownNumber}
+            </span>
+          ) : null}
         </div>
         <div className='actions flex justify-center mt-10'>
           <button
+            disabled={countDownNumber !== countDownInitTime}
+            className={`${
+              countDownNumber !== countDownInitTime
+                ? 'hover:cursor-not-allowed'
+                : ''
+            }  `}
             onClick={() => {
-              takePhoto()
+              setCountDownNumber(countDownInitTime - 1)
             }}
           >
             <CameraRoundedIcon
@@ -124,17 +158,21 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
             ></CameraRoundedIcon>
           </button>
         </div>
-        {cameras.map((camera) => (
-          <li
-            onClick={() => {
-              changeCamera(camera.deviceId)
-            }}
-            className={`${camera.active ? 'bg-pink-100' : ''}`}
-            key={camera.deviceId}
-          >
-            {camera.label.split('(')[0]}
-          </li>
-        ))}
+        <div className='camera-options flex flex-col justify-center items-center py-10 '>
+          {cameras.map((camera) => (
+            <li
+              onClick={() => {
+                changeCamera(camera.deviceId)
+              }}
+              className={`${
+                camera.active ? 'text-red-500' : 'text-white '
+              } list-none hover:text-red-300 hover:cursor-pointer`}
+              key={camera.deviceId}
+            >
+              {camera.label.split('(')[0]}
+            </li>
+          ))}
+        </div>
       </div>
       {/* ) : null} */}
     </>
