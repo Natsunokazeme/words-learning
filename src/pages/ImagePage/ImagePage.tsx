@@ -101,7 +101,6 @@ const ImagePage = () => {
       <div className='actions flex justify-center mt-10'>
         <button
           onClick={() => {
-            //todo open camera
             setOpenCamera(true)
           }}
         >
@@ -116,7 +115,6 @@ const ImagePage = () => {
         </button>
         <button
           onClick={() => {
-            //todo download image
             saveCanvas()
           }}
         >
@@ -145,8 +143,6 @@ const ImagePage = () => {
             // only one file now
             convertFileToImage(files[0])
             ;(uploadRef.current as HTMLInputElement).value = ''
-          } else {
-            // todo empty files
           }
         }}
       />

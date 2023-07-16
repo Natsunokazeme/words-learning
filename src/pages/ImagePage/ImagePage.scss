@@ -1,3 +1,4 @@
 .image-page {
   background-color: var(--main-color);
+  @apply flex flex-col items-center justify-center;
 }

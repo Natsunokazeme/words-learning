@@ -17,12 +17,12 @@ const CropperModal = (props: CropperModalProps) => {
 
   useEffect(() => {}, [props.cropperImg])
   return (
-    // <div className='cropper-modal'>
     <Modal
       open={props.show}
       onClose={() => {
         props.setShow(false)
       }}
+      className='cropper-modal'
       hideBackdrop
     >
       <>

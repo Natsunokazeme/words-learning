@@ -1,7 +1,7 @@
-import React, {FC, useRef, useState} from 'react'
+import React, {FC, useMemo, useRef, useState} from 'react'
 import './CameraScan.scss'
 import {useEffect} from 'react'
-import {CircularProgress} from '@mui/material'
+import {CircularProgress, Modal} from '@mui/material'
 import CameraRoundedIcon from '@mui/icons-material/CameraRounded'
 
 interface CameraScanProps {
@@ -45,12 +45,16 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
 
   useEffect(() => {
     // update custom camera
-    startCamera({
-      video: {
-        deviceId: {exact: cameras.find((camera) => camera.active)?.deviceId},
-      },
-    })
-  }, [cameras])
+    if (!prop.show) {
+      stopCamera()
+    } else {
+      startCamera({
+        video: {
+          deviceId: {exact: cameras.find((camera) => camera.active)?.deviceId},
+        },
+      })
+    }
+  }, [cameras, prop.show])
 
   useEffect(() => {
     let timeoutRef: NodeJS.Timeout
@@ -64,20 +68,23 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
         takePhoto()
       }
     }
-
     if (countDownNumber !== countDownInitTime) {
       countDown()
     }
-
     return () => {
       clearTimeout(timeoutRef)
     }
   }, [countDownNumber])
 
+  const videoEle = useMemo(() => {
+    return (
+      <video id='video' ref={videoRef} className={`max-w-full camera`}></video>
+    )
+  }, [])
+
   const startCamera = (constraints: MediaStreamConstraints) => {
     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
       setStream(stream)
-      // todo when show is false,  video is false
       const video = videoRef.current as HTMLVideoElement
       video.srcObject = stream
       video.onloadeddata = () => {
@@ -107,20 +114,20 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
 
   const stopCamera = () => {
     setLoading(true)
+    setCountDownNumber(countDownInitTime)
     stream?.getTracks().forEach((track) => track.stop())
   }
-
-  //todo count down for camera
   // todo empty image
-  //todo hide camera after canvas is loaded
 
   return (
-    <>
-      <div
-        className={`${
-          prop.show ? '' : 'invisible'
-        } camera-modal py-20 bg-black`}
-      >
+    <Modal
+      open={prop.show}
+      onClose={() => {
+        prop.setShow(false)
+      }}
+      className={`camera-modal py-20 bg-black`}
+    >
+      <>
         {loading ? (
           <CircularProgress size={100} className='fixed left-1/2 top-1/2' />
         ) : null}
@@ -129,11 +136,7 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
             loading ? 'hidden' : ''
           }`}
         >
-          <video
-            id='video'
-            ref={videoRef}
-            className={`max-w-full camera`}
-          ></video>
+          {videoEle}
           {countDownNumber < countDownInitTime && countDownNumber >= 0 ? (
             <span className='count-down font-bold absolute text-white text-5xl'>
               {countDownNumber}
@@ -173,9 +176,8 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
             </li>
           ))}
         </div>
-      </div>
-      {/* ) : null} */}
-    </>
+      </>
+    </Modal>
   )
 }
 
