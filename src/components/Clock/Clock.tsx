@@ -1,10 +1,15 @@
 import './Clock.scss'
 import React, {useState} from 'react'
 import {useEffect} from 'react'
+import dayjs from 'dayjs'
+import localFormat from 'dayjs/plugin/localizedFormat'
+import 'dayjs/locale/zh-cn'
 
 const Clock = () => {
   const [curTime, setCurTime] = useState(new Date())
   useEffect(() => {
+    dayjs.extend(localFormat)
+    dayjs.locale('zh-cn')
     setInterval(() => {
       setCurTime(new Date())
     }, 1000)
@@ -41,8 +46,7 @@ const Clock = () => {
 
   return (
     <div className='clock-wrapper'>
-      <h1>{curTime.toISOString()}</h1>
-      {curTime.getSeconds()}
+      <h1 className='date'>{dayjs(curTime).format('LLLL')}</h1>
       <div className='clock'>
         <div className='seconds'>
           {circleElements(60, 250, curTime.getSeconds(), '秒')}

@@ -41,6 +41,10 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
           }))
       )
     })
+    return () => {
+      console.log('unmount')
+      stopCamera()
+    }
   }, [])
 
   useEffect(() => {
@@ -76,11 +80,11 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
     }
   }, [countDownNumber])
 
-  const videoEle = useMemo(() => {
-    return (
-      <video id='video' ref={videoRef} className={`max-w-full camera`}></video>
-    )
-  }, [])
+  // const videoEle = useMemo(() => {
+  //   return (
+
+  //   )
+  // }, [])
 
   const startCamera = (constraints: MediaStreamConstraints) => {
     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
@@ -112,10 +116,11 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
     )
   }
 
-  const stopCamera = () => {
+  const stopCamera = async () => {
     setLoading(true)
     setCountDownNumber(countDownInitTime)
-    stream?.getTracks().forEach((track) => track.stop())
+    await stream?.getTracks().forEach((track) => track.stop())
+    console.log('stop camera')
   }
   // todo empty image
 
@@ -125,6 +130,7 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
       onClose={() => {
         prop.setShow(false)
       }}
+      keepMounted
       className={`camera-modal py-20 bg-black`}
     >
       <>
@@ -133,10 +139,14 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
         ) : null}
         <div
           className={`camera-wrapper relative flex justify-center items-center gap-5 ${
-            loading ? 'hidden' : ''
+            loading ? 'transparent' : ''
           }`}
         >
-          {videoEle}
+          <video
+            id='video'
+            ref={videoRef}
+            className={`max-w-full camera`}
+          ></video>
           {countDownNumber < countDownInitTime && countDownNumber >= 0 ? (
             <span className='count-down font-bold absolute text-white text-5xl'>
               {countDownNumber}

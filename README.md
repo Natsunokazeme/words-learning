@@ -28,6 +28,10 @@
 19. 单个输入 excel 导入
 20. 随机 10 个，搜索支持
 
+21. midjourny 项目 api 集成
+22. xoxp-5593807935527-5608347157234-5610918124132-b25c1a50cac526b8a7aabe629fe76e37
+23. U05JL1UCRFS
+
 微信
 
 tech stack: react react-router tailwindcss scss cropper react-cropper mui canvas gif.js

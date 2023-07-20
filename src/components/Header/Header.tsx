@@ -70,15 +70,35 @@ const Header = (props: any) => {
     if (!value || value.trim() === '') {
       return
     }
-    // TODO: search api
-    apis.get(`/search?id=${value}`).then((response: any) => {
-      console.log(response)
-      if (response.result.code === 404) {
-        showSnackbarCallback({
-          message: 'search failed, word not found',
-          type: 'error',
-        })
+    // // TODO: search api
+    // apis.get(`/search?id=${value}`).then((response: any) => {
+    //   console.log(response)
+    //   if (response.result.code === 404) {
+    //     showSnackbarCallback({
+    //       message: 'search failed, word not found',
+    //       type: 'error',
+    //     })
+    //   }
+    // })
+
+    // TODO: mdj api
+    apis.get(`/createImage?prompt=${value}`).then((response: any) => {
+      const image = new Image()
+      image.src = 'data:image/png;base64,' + response.data.data
+      image.onload = () => {
+        document.body.appendChild(image)
+        //download image
+        // const a = document.createElement('a')
+        // a.href = image.src
+        // a.download = `${value}.png`
+        // a.click()
       }
+      // if (response.result.code === 404) {
+      //   showSnackbarCallback({
+      //     message: 'search failed, word not found',
+      //     type: 'error',
+      //   })
+      // }
     })
   }
 
