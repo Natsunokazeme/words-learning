@@ -81,25 +81,32 @@ const Header = (props: any) => {
     //   }
     // })
 
-    // TODO: mdj api
-    apis.get(`/createImage?prompt=${value}`).then((response: any) => {
-      const image = new Image()
-      image.src = 'data:image/png;base64,' + response.data.data
-      image.onload = () => {
-        document.body.appendChild(image)
-        //download image
-        // const a = document.createElement('a')
-        // a.href = image.src
-        // a.download = `${value}.png`
-        // a.click()
-      }
-      // if (response.result.code === 404) {
-      //   showSnackbarCallback({
-      //     message: 'search failed, word not found',
-      //     type: 'error',
-      //   })
-      // }
-    })
+    // mdj text2img api
+    apis
+      .post(`/createImage`, {
+        prompt: value,
+        steps: 100,
+        width: window.innerWidth / 2,
+        height: window.innerHeight / 2,
+      })
+      .then((response: any) => {
+        const image = new Image()
+        image.src = 'data:image/png;base64,' + response.data.data
+        image.onload = () => {
+          document.body.appendChild(image)
+          //download image
+          // const a = document.createElement('a')
+          // a.href = image.src
+          // a.download = `${value}.png`
+          // a.click()
+        }
+        // if (response.result.code === 404) {
+        //   showSnackbarCallback({
+        //     message: 'search failed, word not found',
+        //     type: 'error',
+        //   })
+        // }
+      })
   }
 
   const handleImportBook = () => {

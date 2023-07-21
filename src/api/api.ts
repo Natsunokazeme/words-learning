@@ -5,7 +5,7 @@ let requestCount = 0;
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: 'http://localhost:3010',
-  timeout: 10000,
+  timeout: 20000,
 });
 
 const decreaseRequestCount = () => {
