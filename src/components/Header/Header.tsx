@@ -1,7 +1,6 @@
 import {
   Alert,
   AppBar,
-  Avatar,
   IconButton,
   Snackbar,
   Toolbar,
@@ -14,6 +13,7 @@ import SearchWrapper from '../SearchWrapper/SearchWrapper'
 import LoginDialog from '../LoginDialog/LoginDialog'
 import {NavLink} from 'react-router-dom'
 import * as apis from '../../api/api'
+import CryptoJS from 'crypto-js'
 
 interface SnackbarConfig {
   message: string
@@ -28,13 +28,15 @@ const Header = (props: any) => {
     message: '',
     type: 'success',
   })
-  let avatar = localStorage.getItem('avatar')
+  // let avatar = localStorage.getItem('avatar')
 
   useEffect(() => {
     console.log('showNavigation', showNavigation)
   }, [showNavigation])
 
   const handleLogin = (username: string, password: string) => {
+    const hashToken = CryptoJS.MD5(username + password).toString()
+    console.log(hashToken)
     apis
       .post('/login', {
         username,
@@ -42,8 +44,8 @@ const Header = (props: any) => {
       })
       .then((response: any) => {
         const data = response.data
-        avatar = data.imgurl
-        localStorage.setItem('avatar', avatar ?? '')
+        // avatar = data.imgurl
+        // localStorage.setItem('avatar', avatar ?? '')
         showSnackbarCallback({
           message: 'Login successfully',
           type: 'success',
@@ -188,21 +190,20 @@ const Header = (props: any) => {
               </NavLink>
             </IconButton>
           </Tooltip>
-          {avatar && avatar !== '' ? (
+          {/* {avatar && avatar !== '' ? (
             <Avatar alt='user avatar' src={avatar}></Avatar>
-          ) : (
-            <Tooltip arrow title='login'>
-              <IconButton
-                size='large'
-                edge='start'
-                color='inherit'
-                aria-label='login'
-                onClick={() => setShowLogin(true)}
-              >
-                <AccountCircle />
-              </IconButton>
-            </Tooltip>
-          )}
+          ) : ( */}
+          <Tooltip arrow title='login'>
+            <IconButton
+              size='large'
+              edge='start'
+              color='inherit'
+              aria-label='login'
+              onClick={() => setShowLogin(true)}
+            >
+              <AccountCircle />
+            </IconButton>
+          </Tooltip>
           <LoginDialog
             showLogin={showLogin}
             setShowLogin={setShowLogin}

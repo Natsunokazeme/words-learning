@@ -8,6 +8,7 @@ import {
 } from '@mui/material'
 import React, {FC, useState} from 'react'
 import './LoginDialog.scss'
+import {NavLink} from 'react-router-dom'
 
 interface LoginDialogProps {
   showLogin: boolean
@@ -22,6 +23,7 @@ const LoginDialog: FC<LoginDialogProps> = (prop) => {
   return (
     <Dialog
       open={prop.showLogin}
+      className='login-dialog'
       onClose={() => {
         prop.setShowLogin(false)
       }}
@@ -47,6 +49,12 @@ const LoginDialog: FC<LoginDialogProps> = (prop) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <NavLink className='sign-up link' to='/create-account' end>
+          no account yet? sign up
+        </NavLink>
+        <NavLink className='forgot-password link' to='/create-account' end>
+          forgot password?
+        </NavLink>
       </DialogContent>
       <DialogActions>
         <Button
