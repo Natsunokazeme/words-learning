@@ -1,11 +1,4 @@
-import {
-  Alert,
-  AppBar,
-  IconButton,
-  Snackbar,
-  Toolbar,
-  Tooltip,
-} from '@mui/material'
+import {AppBar, IconButton, Toolbar, Tooltip} from '@mui/material'
 import './Header.scss'
 import {useEffect, useState} from 'react'
 import {AccountCircle, CameraAlt, NearMe, Upload} from '@mui/icons-material'
@@ -14,19 +7,22 @@ import LoginDialog from '../LoginDialog/LoginDialog'
 import {NavLink} from 'react-router-dom'
 import * as apis from '../../api/api'
 import CryptoJS from 'crypto-js'
+import * as Enums from '../../enums'
+import SnackAlert from '../SnackAlert/SnackAlert'
 
 interface SnackbarConfig {
   message: string
-  type: 'success' | 'info' | 'warning' | 'error'
+  type: Enums.AlertType
+  show: boolean
 }
 
 const Header = (props: any) => {
   const [showLogin, setShowLogin] = useState(false)
   const [showNavigation, setShowNavigation] = useState(false)
-  const [showSnackbar, setShowSnackbar] = useState(false)
-  const [snackConfig, setSnackConfig] = useState<SnackbarConfig>({
+  const [alertConfig, setAlertConfig] = useState<SnackbarConfig>({
     message: '',
-    type: 'success',
+    type: Enums.AlertType.SUCCESS,
+    show: false,
   })
   // let avatar = localStorage.getItem('avatar')
 
@@ -46,17 +42,19 @@ const Header = (props: any) => {
         const data = response.data
         // avatar = data.imgurl
         // localStorage.setItem('avatar', avatar ?? '')
-        showSnackbarCallback({
+        setAlertConfig({
           message: 'Login successfully',
-          type: 'success',
+          type: Enums.AlertType.SUCCESS,
+          show: true,
         })
         setShowLogin(false)
       })
       .catch((error) => {
         console.log(error)
-        showSnackbarCallback({
+        setAlertConfig({
           message: error.message,
-          type: 'error',
+          type: Enums.AlertType.ERROR,
+          show: true,
         })
       })
   }
@@ -142,10 +140,9 @@ const Header = (props: any) => {
         // }
       })
   }
-  const showSnackbarCallback = (config: SnackbarConfig) => {
-    setSnackConfig(config)
-    setShowSnackbar(true)
-  }
+  // const showSnackbarCallback = (config: SnackbarConfig) => {
+  //   setAlertConfig(config)
+  // }
 
   return (
     <>
@@ -210,20 +207,12 @@ const Header = (props: any) => {
             handleLogin={handleLogin}
           ></LoginDialog>
         </Toolbar>
-        <Snackbar
-          anchorOrigin={{vertical: 'top', horizontal: 'center'}}
-          open={showSnackbar}
-          onClose={() => setShowSnackbar(false)}
-          autoHideDuration={4000}
-        >
-          <Alert
-            onClose={() => setShowSnackbar(false)}
-            severity={snackConfig.type}
-            sx={{width: '100%'}}
-          >
-            {snackConfig.message}
-          </Alert>
-        </Snackbar>
+        <SnackAlert
+          show={alertConfig.show}
+          onClose={() => setAlertConfig({...alertConfig, show: false})}
+          message={alertConfig.message}
+          type={alertConfig.type}
+        ></SnackAlert>
       </AppBar>
     </>
   )
