@@ -4,6 +4,9 @@ import './styles/tailwind.scss'
 import MainPage from './pages/MainPage/MainPage'
 import Loading from './components/Loading/Loading'
 import {ThemeProvider, createTheme} from '@mui/material'
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+import CreateAccountPage from './pages/CreateAccountPage/CreateAccountPage'
+import ImagePage from './pages/ImagePage/ImagePage'
 
 function App() {
   const customTheme = createTheme({
@@ -27,12 +30,22 @@ function App() {
     }
   }, [])
   return (
-    <div className='App'>
-      <ThemeProvider theme={customTheme}>
+    <ThemeProvider theme={customTheme}>
+      <div className='App'>
         {loading ? <Loading /> : null}
-        <MainPage></MainPage>
-      </ThemeProvider>
-    </div>
+        <Router>
+          <Routes>
+            <Route path='/' element={<MainPage />}></Route>
+            <Route path='/camera' element={<ImagePage />}></Route>
+            <Route
+              path='/create-account'
+              element={<CreateAccountPage />}
+            ></Route>
+            <Route path='*' element={<div>404</div>}></Route>
+          </Routes>
+        </Router>
+      </div>
+    </ThemeProvider>
   )
 }
 
