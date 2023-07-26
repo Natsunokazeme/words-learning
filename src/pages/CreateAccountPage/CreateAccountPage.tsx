@@ -4,6 +4,9 @@ import GoogleIcon from '@mui/icons-material/Google'
 import {ChangeEvent, useState} from 'react'
 import SnackAlert from '../../components/SnackAlert/SnackAlert'
 import * as Enums from '../../enums'
+import {Button, TextField} from '@mui/material'
+import * as apis from '../../api/api'
+import {useNavigate} from 'react-router-dom'
 
 interface AccountForm {
   email: string
@@ -16,13 +19,16 @@ interface AlertConfig {
   show: boolean
   message: string
   type: Enums.AlertType
+  onClose: () => void
 }
 
 const CreateAccountPage = () => {
+  const navigate = useNavigate()
   const [alertConfig, setAlertConfig] = useState<AlertConfig>({
     message: '',
     type: Enums.AlertType.SUCCESS,
     show: false,
+    onClose: () => {},
   })
   const [accountForm, setAccountForm] = useState<AccountForm>({
     email: '',
@@ -46,8 +52,27 @@ const CreateAccountPage = () => {
         message: 'Password and confirm password do not match',
         type: Enums.AlertType.ERROR,
         show: true,
+        onClose: () => setAlertConfig({...alertConfig, show: false}),
       })
-      // call api
+    } else {
+      apis
+        .post('/user', {
+          userName: accountForm.username,
+          password: accountForm.password,
+          email: accountForm.email,
+        })
+        .then((res: any) => {
+          localStorage.setItem('token', res.data.token)
+          setAlertConfig({
+            message: res.data.message,
+            type: Enums.AlertType.SUCCESS,
+            show: true,
+            onClose: () => {
+              setAlertConfig({...alertConfig, show: false})
+              navigate('/')
+            },
+          })
+        })
     }
   }
 
@@ -57,58 +82,71 @@ const CreateAccountPage = () => {
         <div className='form-content'>
           <header className='title'>Sign up</header>
           <form onSubmit={handleSubmit}>
-            <div className='field '>
-              <input
-                placeholder='Username'
-                value={accountForm.username}
-                name='username'
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className='field '>
-              <input
-                type='email'
-                placeholder='Email'
-                value={accountForm.email}
-                name='email'
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className='field '>
-              <input
-                type='password'
-                placeholder='Create password'
-                className='password'
-                value={accountForm.password}
-                name='password'
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className='field '>
-              <input
-                type='password'
-                placeholder='Confirm password'
-                className='password'
-                value={accountForm.confirmPassword}
-                name='confirmPassword'
-                onChange={handleInputChange}
-              />
-              <i className='bx bx-hide eye-icon'></i>
-            </div>
-            <div className='field button-field'>
-              <button>Signup</button>
-            </div>
+            <TextField
+              fullWidth
+              label='Username'
+              value={accountForm.username}
+              onChange={handleInputChange}
+              required
+              name='username'
+              sx={{mb: 2}}
+            ></TextField>
+            <TextField
+              fullWidth
+              label='Email'
+              value={accountForm.email}
+              onChange={handleInputChange}
+              required
+              type='email'
+              name='email'
+              sx={{mb: 2}}
+            ></TextField>
+            <TextField
+              fullWidth
+              label='Password'
+              value={accountForm.password}
+              onChange={handleInputChange}
+              required
+              error={accountForm.password !== accountForm.confirmPassword}
+              type='password'
+              name='password'
+              helperText={
+                accountForm.password !== accountForm.confirmPassword
+                  ? 'Password and confirm password do not match'
+                  : ''
+              }
+              sx={{mb: 2}}
+            ></TextField>
+            <TextField
+              fullWidth
+              label='Confirm Password'
+              value={accountForm.confirmPassword}
+              onChange={handleInputChange}
+              required
+              error={accountForm.password !== accountForm.confirmPassword}
+              type='password'
+              name='confirmPassword'
+              helperText={
+                accountForm.password !== accountForm.confirmPassword
+                  ? 'Password and confirm password do not match'
+                  : ''
+              }
+              sx={{mb: 2}}
+            ></TextField>
+            <Button variant='contained' color='primary' fullWidth type='submit'>
+              Sign up
+            </Button>
           </form>
           <div className='form-link'>
             <span>
-              Already have an account?{' '}
+              Already have an account?
               <a href='#' className='link login-link'>
                 Login
               </a>
             </span>
           </div>
         </div>
-        <div className='line'></div>
+        {/* <div className='line'></div>
         <div className='media-options'>
           <a href='#' className='field facebook'>
             <FacebookIcon></FacebookIcon>
@@ -120,11 +158,11 @@ const CreateAccountPage = () => {
             <GoogleIcon></GoogleIcon>
             <span>Login with Google</span>
           </a>
-        </div>
+        </div> */}
       </div>
       <SnackAlert
         show={alertConfig.show}
-        onClose={() => setAlertConfig({...alertConfig, show: false})}
+        onClose={alertConfig.onClose}
         message={alertConfig.message}
         type={alertConfig.type}
       ></SnackAlert>
