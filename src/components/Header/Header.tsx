@@ -31,19 +31,19 @@ const Header = (props: any) => {
   }, [showNavigation])
 
   const handleLogin = (username: string, password: string) => {
-    const hashToken = CryptoJS.MD5(username + password).toString()
-    console.log(hashToken)
+    const hashToken = CryptoJS.MD5(password).toString()
+
     apis
-      .post('/login', {
+      .post('user/login', {
         username,
-        password,
+        password: hashToken,
       })
       .then((response: any) => {
         const data = response.data
         // avatar = data.imgurl
         // localStorage.setItem('avatar', avatar ?? '')
         setAlertConfig({
-          message: 'Login successfully',
+          message: data.message,
           type: Enums.AlertType.SUCCESS,
           show: true,
         })
@@ -60,10 +60,14 @@ const Header = (props: any) => {
   }
 
   const handleNavigation = () => {
-    apis.get('/IPAdress').then((response) => {
-      console.log(response)
-      setShowNavigation(!showNavigation)
-    })
+    apis
+      .get('/IPAdress', {
+        withCredentials: true,
+      })
+      .then((response) => {
+        console.log(response)
+        setShowNavigation(!showNavigation)
+      })
   }
 
   const handleSearch = (value: string) => {

@@ -1,6 +1,4 @@
 import './CreateAccountPage.scss'
-import FacebookIcon from '@mui/icons-material/Facebook'
-import GoogleIcon from '@mui/icons-material/Google'
 import {ChangeEvent, useState} from 'react'
 import SnackAlert from '../../components/SnackAlert/SnackAlert'
 import * as Enums from '../../enums'
@@ -56,11 +54,17 @@ const CreateAccountPage = () => {
       })
     } else {
       apis
-        .post('/user', {
-          userName: accountForm.username,
-          password: accountForm.password,
-          email: accountForm.email,
-        })
+        .post(
+          '/user/create',
+          {
+            userName: accountForm.username,
+            password: accountForm.password,
+            email: accountForm.email,
+          },
+          {
+            withCredentials: true,
+          }
+        )
         .then((res: any) => {
           localStorage.setItem('token', res.data.token)
           setAlertConfig({
