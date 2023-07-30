@@ -1,4 +1,10 @@
-import {AppBar, IconButton, Toolbar, Tooltip} from '@mui/material'
+import {
+  AppBar,
+  IconButton,
+  Toolbar,
+  Tooltip,
+  createSvgIcon,
+} from '@mui/material'
 import './Header.scss'
 import {useEffect, useState} from 'react'
 import {AccountCircle, CameraAlt, NearMe, Upload} from '@mui/icons-material'
@@ -9,7 +15,10 @@ import * as apis from '../../api/api'
 import CryptoJS from 'crypto-js'
 import * as Enums from '../../enums'
 import SnackAlert from '../SnackAlert/SnackAlert'
-
+import TranslateIcon from '@mui/icons-material/Translate'
+import BrushIcon from '@mui/icons-material/Brush'
+import {ReactComponent as WeChat} from '../../assets/icons/weChat.svg'
+import AutoStoriesIcon from '@mui/icons-material/AutoStories'
 interface SnackbarConfig {
   message: string
   type: Enums.AlertType
@@ -148,10 +157,64 @@ const Header = (props: any) => {
   //   setAlertConfig(config)
   // }
 
+  const WeChatIcon = createSvgIcon(<WeChat />, 'WeChatIcon')
+
   return (
     <>
       <AppBar position='sticky'>
         <Toolbar>
+          <Tooltip arrow title='language learning'>
+            <IconButton
+              size='large'
+              edge='start'
+              color='inherit'
+              aria-label='language learning'
+              onClick={() => console.warn('translate')}
+            >
+              <NavLink to='language-learning' end>
+                <TranslateIcon />
+              </NavLink>
+            </IconButton>
+          </Tooltip>
+          <Tooltip arrow title='creation'>
+            <IconButton
+              size='large'
+              edge='start'
+              color='inherit'
+              aria-label='creation'
+              onClick={() => console.warn('creation')}
+            >
+              <NavLink to='creation' end>
+                <BrushIcon />
+              </NavLink>
+            </IconButton>
+          </Tooltip>
+          <Tooltip arrow title='weChat settings'>
+            <IconButton
+              size='large'
+              edge='start'
+              color='inherit'
+              aria-label='weChat settings'
+              onClick={() => console.warn('weChat settings')}
+            >
+              <NavLink to='wechat-settings' end>
+                <WeChatIcon />
+              </NavLink>
+            </IconButton>
+          </Tooltip>
+          <Tooltip arrow title='computer notebook'>
+            <IconButton
+              size='large'
+              edge='start'
+              color='inherit'
+              aria-label='computer notebook'
+              onClick={() => console.warn('computer notebook')}
+            >
+              <NavLink to='computer-notebook' end>
+                <AutoStoriesIcon />
+              </NavLink>
+            </IconButton>
+          </Tooltip>
           <IconButton
             size='large'
             edge='start'

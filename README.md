@@ -32,7 +32,10 @@
 22. xoxp-5593807935527-5608347157234-5610918124132-b25c1a50cac526b8a7aabe629fe76e37
 23. U05JL1UCRFS
 24. 注册 md5 加密 过期时间 邮箱验证
+25. 根据功能拆分成不同页面和不同路由，创造页面：midjourny 和 Claude；语言学习页面：语言学习和单词本；个人中心页面：个人中心和登录注册；微信页面：微信和微信截图生成；笔记页面：八股 (P1)
+26. 登录后显示头像并且可以点击进入个人中心 (P3)
+27. 修改密码功能，需要通过邮箱验证 (P2)
+28. 头像可以上传，上传裁剪，并且限制图片大小或后端压缩图片大小 (P4)
+29. 个人中心页面可以修改个人信息，包括昵称，邮箱，头像，密码 (P4)
 
-微信
-
-tech stack: react react-router tailwindcss scss cropper react-cropper mui canvas gif.js
+tech stack: react react-router tailwindcss scss cropper react-cropper mui canvas gif.js md5 axios
