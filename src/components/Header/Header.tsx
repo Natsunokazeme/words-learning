@@ -10,7 +10,7 @@ import {useEffect, useState} from 'react'
 import {AccountCircle, CameraAlt, NearMe, Upload} from '@mui/icons-material'
 import SearchWrapper from '../SearchWrapper/SearchWrapper'
 import LoginDialog from '../LoginDialog/LoginDialog'
-import {NavLink} from 'react-router-dom'
+import {NavLink, useNavigate} from 'react-router-dom'
 import * as apis from '../../api/api'
 import CryptoJS from 'crypto-js'
 import * as Enums from '../../enums'
@@ -33,6 +33,7 @@ const Header = (props: any) => {
     type: Enums.AlertType.SUCCESS,
     show: false,
   })
+  const navigate = useNavigate()
   // let avatar = localStorage.getItem('avatar')
 
   useEffect(() => {
@@ -169,11 +170,9 @@ const Header = (props: any) => {
               edge='start'
               color='inherit'
               aria-label='language learning'
-              onClick={() => console.warn('translate')}
+              onClick={() => navigate('/language-learning')}
             >
-              <NavLink to='language-learning' end>
-                <TranslateIcon />
-              </NavLink>
+              <TranslateIcon />
             </IconButton>
           </Tooltip>
           <Tooltip arrow title='creation'>
@@ -182,11 +181,9 @@ const Header = (props: any) => {
               edge='start'
               color='inherit'
               aria-label='creation'
-              onClick={() => console.warn('creation')}
+              onClick={() => navigate('/creation')}
             >
-              <NavLink to='creation' end>
-                <BrushIcon />
-              </NavLink>
+              <BrushIcon />
             </IconButton>
           </Tooltip>
           <Tooltip arrow title='weChat settings'>
@@ -195,11 +192,9 @@ const Header = (props: any) => {
               edge='start'
               color='inherit'
               aria-label='weChat settings'
-              onClick={() => console.warn('weChat settings')}
+              onClick={() => navigate('/wechat-settings')}
             >
-              <NavLink to='wechat-settings' end>
-                <WeChatIcon />
-              </NavLink>
+              <WeChatIcon />
             </IconButton>
           </Tooltip>
           <Tooltip arrow title='computer notebook'>
@@ -208,11 +203,9 @@ const Header = (props: any) => {
               edge='start'
               color='inherit'
               aria-label='computer notebook'
-              onClick={() => console.warn('computer notebook')}
+              onClick={() => navigate('/computer-notebook')}
             >
-              <NavLink to='computer-notebook' end>
-                <AutoStoriesIcon />
-              </NavLink>
+              <AutoStoriesIcon />
             </IconButton>
           </Tooltip>
           <IconButton
@@ -241,17 +234,17 @@ const Header = (props: any) => {
               <Upload />
             </IconButton>
           </Tooltip>
-          <Tooltip arrow title='scan words'>
+          <Tooltip arrow title='camera'>
             <IconButton
               size='large'
               edge='start'
               color='inherit'
-              aria-label='scan words'
-              onClick={() => console.warn('scan words')}
+              aria-label='camera'
+              onClick={() => navigate('/camera')}
             >
-              <NavLink className={'text-xs'} to='camera' end>
-                <CameraAlt />
-              </NavLink>
+              {/* <NavLink className={'text-xs'} to='camera' end> */}
+              <CameraAlt />
+              {/* </NavLink> */}
             </IconButton>
           </Tooltip>
           {/* {avatar && avatar !== '' ? (
