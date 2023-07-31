@@ -1,1 +1,5 @@
-.LoginDialog {}
+.login-dialog {
+  .link {
+    @apply block text-center text-blue-500 hover:underline;
+  }
+}

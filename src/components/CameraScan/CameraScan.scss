@@ -1,11 +1,13 @@
-.camera-wrapper {
-  .camera {
-    transform: rotateY(0.5turn);
+.camera-modal {
+  .camera-wrapper {
+    .camera {
+      transform: rotateY(0.5turn);
+    }
   }
-}
-.MuiModal-root {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.5);
+  .MuiModal-root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
 }

@@ -1,18 +1,11 @@
 import axios, { AxiosInstance } from 'axios';
 
-// export interface IApi {
-//   get<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>>;
-//   post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>>;
-//   put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>>;
-//   delete<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>>;
-// }
-
 let requestCount = 0;
 
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: 'http://localhost:3010',
-  timeout: 10000,
+  timeout: 20000,
 });
 
 const decreaseRequestCount = () => {

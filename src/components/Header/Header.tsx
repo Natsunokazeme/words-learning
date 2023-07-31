@@ -1,85 +1,126 @@
 import {
-  Alert,
   AppBar,
-  Avatar,
   IconButton,
-  Snackbar,
   Toolbar,
   Tooltip,
+  createSvgIcon,
 } from '@mui/material'
 import './Header.scss'
 import {useEffect, useState} from 'react'
 import {AccountCircle, CameraAlt, NearMe, Upload} from '@mui/icons-material'
 import SearchWrapper from '../SearchWrapper/SearchWrapper'
 import LoginDialog from '../LoginDialog/LoginDialog'
-import {NavLink} from 'react-router-dom'
+import {NavLink, useNavigate} from 'react-router-dom'
 import * as apis from '../../api/api'
-
+import CryptoJS from 'crypto-js'
+import * as Enums from '../../enums'
+import SnackAlert from '../SnackAlert/SnackAlert'
+import TranslateIcon from '@mui/icons-material/Translate'
+import BrushIcon from '@mui/icons-material/Brush'
+import {ReactComponent as WeChat} from '../../assets/icons/weChat.svg'
+import AutoStoriesIcon from '@mui/icons-material/AutoStories'
 interface SnackbarConfig {
   message: string
-  type: 'success' | 'info' | 'warning' | 'error'
+  type: Enums.AlertType
+  show: boolean
 }
 
 const Header = (props: any) => {
   const [showLogin, setShowLogin] = useState(false)
   const [showNavigation, setShowNavigation] = useState(false)
-  const [showSnackbar, setShowSnackbar] = useState(false)
-  const [snackConfig, setSnackConfig] = useState<SnackbarConfig>({
+  const [alertConfig, setAlertConfig] = useState<SnackbarConfig>({
     message: '',
-    type: 'success',
+    type: Enums.AlertType.SUCCESS,
+    show: false,
   })
-  let avatar = localStorage.getItem('avatar')
+  const navigate = useNavigate()
+  // let avatar = localStorage.getItem('avatar')
 
   useEffect(() => {
     console.log('showNavigation', showNavigation)
   }, [showNavigation])
 
   const handleLogin = (username: string, password: string) => {
+    const hashToken = CryptoJS.MD5(password).toString()
+
     apis
-      .post('/login', {
+      .post('user/login', {
         username,
-        password,
+        password: hashToken,
       })
       .then((response: any) => {
         const data = response.data
-        avatar = data.imgurl
-        localStorage.setItem('avatar', avatar ?? '')
-        showSnackbarCallback({
-          message: 'Login successfully',
-          type: 'success',
+        // avatar = data.imgurl
+        // localStorage.setItem('avatar', avatar ?? '')
+        setAlertConfig({
+          message: data.message,
+          type: Enums.AlertType.SUCCESS,
+          show: true,
         })
         setShowLogin(false)
       })
       .catch((error) => {
         console.log(error)
-        showSnackbarCallback({
+        setAlertConfig({
           message: error.message,
-          type: 'error',
+          type: Enums.AlertType.ERROR,
+          show: true,
         })
       })
   }
 
   const handleNavigation = () => {
-    apis.get('/IPAdress').then((response) => {
-      console.log(response)
-      setShowNavigation(!showNavigation)
-    })
+    apis
+      .get('/IPAdress', {
+        withCredentials: true,
+      })
+      .then((response) => {
+        console.log(response)
+        setShowNavigation(!showNavigation)
+      })
   }
 
   const handleSearch = (value: string) => {
     if (!value || value.trim() === '') {
       return
     }
-    // TODO: search api
-    apis.get(`/search?id=${value}`).then((response: any) => {
-      console.log(response)
-      if (response.result.code === 404) {
-        showSnackbarCallback({
-          message: 'search failed, word not found',
-          type: 'error',
-        })
-      }
-    })
+    // // TODO: search api
+    // apis.get(`/search?id=${value}`).then((response: any) => {
+    //   console.log(response)
+    //   if (response.result.code === 404) {
+    //     showSnackbarCallback({
+    //       message: 'search failed, word not found',
+    //       type: 'error',
+    //     })
+    //   }
+    // })
+
+    // mdj text2img api
+    apis
+      .post(`/createImage`, {
+        prompt: value,
+        steps: 100,
+        width: window.innerWidth / 2,
+        height: window.innerHeight / 2,
+      })
+      .then((response: any) => {
+        const image = new Image()
+        image.src = 'data:image/png;base64,' + response.data.data
+        image.onload = () => {
+          document.body.appendChild(image)
+          //download image
+          // const a = document.createElement('a')
+          // a.href = image.src
+          // a.download = `${value}.png`
+          // a.click()
+        }
+        // if (response.result.code === 404) {
+        //   showSnackbarCallback({
+        //     message: 'search failed, word not found',
+        //     type: 'error',
+        //   })
+        // }
+      })
   }
 
   const handleImportBook = () => {
@@ -113,15 +154,60 @@ const Header = (props: any) => {
         // }
       })
   }
-  const showSnackbarCallback = (config: SnackbarConfig) => {
-    setSnackConfig(config)
-    setShowSnackbar(true)
-  }
+  // const showSnackbarCallback = (config: SnackbarConfig) => {
+  //   setAlertConfig(config)
+  // }
+
+  const WeChatIcon = createSvgIcon(<WeChat />, 'WeChatIcon')
 
   return (
     <>
       <AppBar position='sticky'>
         <Toolbar>
+          <Tooltip arrow title='language learning'>
+            <IconButton
+              size='large'
+              edge='start'
+              color='inherit'
+              aria-label='language learning'
+              onClick={() => navigate('/language-learning')}
+            >
+              <TranslateIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip arrow title='creation'>
+            <IconButton
+              size='large'
+              edge='start'
+              color='inherit'
+              aria-label='creation'
+              onClick={() => navigate('/creation')}
+            >
+              <BrushIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip arrow title='weChat settings'>
+            <IconButton
+              size='large'
+              edge='start'
+              color='inherit'
+              aria-label='weChat settings'
+              onClick={() => navigate('/wechat-settings')}
+            >
+              <WeChatIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip arrow title='computer notebook'>
+            <IconButton
+              size='large'
+              edge='start'
+              color='inherit'
+              aria-label='computer notebook'
+              onClick={() => navigate('/computer-notebook')}
+            >
+              <AutoStoriesIcon />
+            </IconButton>
+          </Tooltip>
           <IconButton
             size='large'
             edge='start'
@@ -148,54 +234,45 @@ const Header = (props: any) => {
               <Upload />
             </IconButton>
           </Tooltip>
-          <Tooltip arrow title='scan words'>
+          <Tooltip arrow title='camera'>
             <IconButton
               size='large'
               edge='start'
               color='inherit'
-              aria-label='scan words'
-              onClick={() => console.warn('scan words')}
+              aria-label='camera'
+              onClick={() => navigate('/camera')}
             >
-              <NavLink className={'text-xs'} to='camera' end>
-                <CameraAlt />
-              </NavLink>
+              {/* <NavLink className={'text-xs'} to='camera' end> */}
+              <CameraAlt />
+              {/* </NavLink> */}
             </IconButton>
           </Tooltip>
-          {avatar && avatar !== '' ? (
+          {/* {avatar && avatar !== '' ? (
             <Avatar alt='user avatar' src={avatar}></Avatar>
-          ) : (
-            <Tooltip arrow title='login'>
-              <IconButton
-                size='large'
-                edge='start'
-                color='inherit'
-                aria-label='login'
-                onClick={() => setShowLogin(true)}
-              >
-                <AccountCircle />
-              </IconButton>
-            </Tooltip>
-          )}
+          ) : ( */}
+          <Tooltip arrow title='login'>
+            <IconButton
+              size='large'
+              edge='start'
+              color='inherit'
+              aria-label='login'
+              onClick={() => setShowLogin(true)}
+            >
+              <AccountCircle />
+            </IconButton>
+          </Tooltip>
           <LoginDialog
             showLogin={showLogin}
             setShowLogin={setShowLogin}
             handleLogin={handleLogin}
           ></LoginDialog>
         </Toolbar>
-        <Snackbar
-          anchorOrigin={{vertical: 'top', horizontal: 'center'}}
-          open={showSnackbar}
-          onClose={() => setShowSnackbar(false)}
-          autoHideDuration={4000}
-        >
-          <Alert
-            onClose={() => setShowSnackbar(false)}
-            severity={snackConfig.type}
-            sx={{width: '100%'}}
-          >
-            {snackConfig.message}
-          </Alert>
-        </Snackbar>
+        <SnackAlert
+          show={alertConfig.show}
+          onClose={() => setAlertConfig({...alertConfig, show: false})}
+          message={alertConfig.message}
+          type={alertConfig.type}
+        ></SnackAlert>
       </AppBar>
     </>
   )

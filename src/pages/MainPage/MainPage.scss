@@ -1,3 +1,5 @@
 .main-body {
   @apply w-full min-h-screen;
+  background-color: var(--main-bg-color);
+  color: var(--main-color);
 }
