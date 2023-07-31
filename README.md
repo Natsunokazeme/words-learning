@@ -38,4 +38,6 @@
 28. 头像可以上传，上传裁剪，并且限制图片大小或后端压缩图片大小 (P4)
 29. 个人中心页面可以修改个人信息，包括昵称，邮箱，头像，密码 (P4)
 
-tech stack: react react-router tailwindcss scss cropper react-cropper mui canvas gif.js md5 axios
+tech stack: react react-router tailwindcss scss cropper react-cropper mui canvas gif.js md5 axios generate-react-cli
+
+$ npx generate-react-cli component CreationPage --type=page
