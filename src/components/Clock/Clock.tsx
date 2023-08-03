@@ -7,6 +7,13 @@ import 'dayjs/locale/zh-cn'
 
 const Clock = () => {
   const [curTime, setCurTime] = useState(new Date())
+  const maxSize = Math.max(
+    window.innerWidth > window.innerHeight
+      ? window.innerHeight
+      : window.innerWidth,
+    250
+  )
+
   useEffect(() => {
     dayjs.extend(localFormat)
     dayjs.locale('zh-cn')
@@ -48,14 +55,15 @@ const Clock = () => {
     <div className='clock-wrapper'>
       <h1 className='date'>{dayjs(curTime).format('LLLL')}</h1>
       <div className='clock'>
+        {maxSize}
         <div className='seconds'>
-          {circleElements(60, 250, curTime.getSeconds(), '秒')}
+          {circleElements(60, (40 / 100) * maxSize, curTime.getSeconds(), '秒')}
         </div>
         <div className='minutes'>
-          {circleElements(60, 200, curTime.getMinutes(), '分')}
+          {circleElements(60, (32 / 100) * maxSize, curTime.getMinutes(), '分')}
         </div>
         <div className='hours'>
-          {circleElements(24, 100, curTime.getHours(), '时')}
+          {circleElements(24, (16 / 100) * maxSize, curTime.getHours(), '时')}
         </div>
       </div>
     </div>
