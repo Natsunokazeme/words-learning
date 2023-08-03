@@ -6,7 +6,7 @@ import {
   createSvgIcon,
 } from '@mui/material'
 import './Header.scss'
-import {useEffect, useState} from 'react'
+import {FC, useEffect, useState} from 'react'
 import {AccountCircle, CameraAlt, NearMe, Upload} from '@mui/icons-material'
 import SearchWrapper from '../SearchWrapper/SearchWrapper'
 import LoginDialog from '../LoginDialog/LoginDialog'
@@ -19,13 +19,16 @@ import TranslateIcon from '@mui/icons-material/Translate'
 import BrushIcon from '@mui/icons-material/Brush'
 import {ReactComponent as WeChat} from '../../assets/icons/weChat.svg'
 import AutoStoriesIcon from '@mui/icons-material/AutoStories'
+
 interface SnackbarConfig {
   message: string
   type: Enums.AlertType
   show: boolean
 }
 
-const Header = (props: any) => {
+interface HeaderProps {}
+
+const Header: FC<HeaderProps> = (props) => {
   const [showLogin, setShowLogin] = useState(false)
   const [showNavigation, setShowNavigation] = useState(false)
   const [alertConfig, setAlertConfig] = useState<SnackbarConfig>({
