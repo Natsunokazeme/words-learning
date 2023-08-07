@@ -1,6 +1,9 @@
 import {
   AppBar,
+  Avatar,
   IconButton,
+  Menu,
+  MenuItem,
   Toolbar,
   Tooltip,
   createSvgIcon,
@@ -10,7 +13,7 @@ import {FC, useEffect, useState} from 'react'
 import {AccountCircle, CameraAlt, NearMe, Upload} from '@mui/icons-material'
 import SearchWrapper from '../SearchWrapper/SearchWrapper'
 import LoginDialog from '../LoginDialog/LoginDialog'
-import {NavLink, useNavigate} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import * as apis from '../../api/api'
 import CryptoJS from 'crypto-js'
 import * as Enums from '../../enums'
@@ -31,13 +34,15 @@ interface HeaderProps {}
 const Header: FC<HeaderProps> = (props) => {
   const [showLogin, setShowLogin] = useState(false)
   const [showNavigation, setShowNavigation] = useState(false)
+  const [avatar, setAvatar] = useState('')
+  const [showMenu, setShowMenu] = useState(false)
   const [alertConfig, setAlertConfig] = useState<SnackbarConfig>({
     message: '',
     type: Enums.AlertType.SUCCESS,
     show: false,
   })
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const navigate = useNavigate()
-  // let avatar = localStorage.getItem('avatar')
 
   useEffect(() => {
     console.log('showNavigation', showNavigation)
@@ -53,6 +58,7 @@ const Header: FC<HeaderProps> = (props) => {
       })
       .then((response: any) => {
         const data = response.data
+        setAvatar(data.avatar ?? data.username)
         // avatar = data.imgurl
         // localStorage.setItem('avatar', avatar ?? '')
         setAlertConfig({
@@ -63,12 +69,13 @@ const Header: FC<HeaderProps> = (props) => {
         setShowLogin(false)
       })
       .catch((error) => {
-        console.log(error)
-        setAlertConfig({
-          message: error.message,
-          type: Enums.AlertType.ERROR,
-          show: true,
-        })
+        if (error.response.data.message) {
+          setAlertConfig({
+            message: error.response.data.message,
+            type: Enums.AlertType.ERROR,
+            show: true,
+          })
+        }
       })
   }
 
@@ -161,6 +168,20 @@ const Header: FC<HeaderProps> = (props) => {
   //   setAlertConfig(config)
   // }
 
+  const menuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+    setShowMenu(true)
+  }
+
+  const menuClose = () => {
+    setShowMenu(false)
+  }
+
+  const handleLogout = () => {
+    //todo
+    menuClose()
+  }
+
   const WeChatIcon = createSvgIcon(<WeChat />, 'WeChatIcon')
 
   return (
@@ -250,20 +271,35 @@ const Header: FC<HeaderProps> = (props) => {
               {/* </NavLink> */}
             </IconButton>
           </Tooltip>
-          {/* {avatar && avatar !== '' ? (
-            <Avatar alt='user avatar' src={avatar}></Avatar>
-          ) : ( */}
-          <Tooltip arrow title='login'>
-            <IconButton
-              size='large'
-              edge='start'
-              color='inherit'
-              aria-label='login'
-              onClick={() => setShowLogin(true)}
-            >
-              <AccountCircle />
-            </IconButton>
-          </Tooltip>
+          {avatar && avatar !== '' ? (
+            <>
+              <Avatar
+                alt={avatar}
+                src={avatar}
+                onClick={(e) => {
+                  menuOpen(e)
+                }}
+              ></Avatar>
+              <Menu anchorEl={anchorEl} open={showMenu} onClose={menuClose}>
+                <MenuItem onClick={() => navigate('/my-account')}>
+                  My account
+                </MenuItem>
+                <MenuItem onClick={() => handleLogout()}>Logout</MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <Tooltip arrow title='login'>
+              <IconButton
+                size='large'
+                edge='start'
+                color='inherit'
+                aria-label='login'
+                onClick={() => setShowLogin(true)}
+              >
+                <AccountCircle />
+              </IconButton>
+            </Tooltip>
+          )}
           <LoginDialog
             showLogin={showLogin}
             setShowLogin={setShowLogin}

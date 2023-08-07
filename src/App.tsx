@@ -11,6 +11,7 @@ import CreationPage from './pages/CreationPage/CreationPage'
 import WeChatPage from './pages/WeChatPage/WeChatPage'
 import NotebookPage from './pages/NotebookPage/NotebookPage'
 import LanguageLearningPage from './pages/LanguageLearningPage/LanguageLearningPage'
+import AccountPage from './pages/AccountPage/AccountPage'
 
 function App() {
   const customTheme = createTheme({
@@ -45,6 +46,7 @@ function App() {
               path='/create-account'
               element={<CreateAccountPage />}
             ></Route>
+            <Route path='/my-account' element={<AccountPage />}></Route>
             <Route path='/wechat-settings' element={<WeChatPage />}></Route>
             <Route path='computer-notebook' element={<NotebookPage />}></Route>
             <Route
