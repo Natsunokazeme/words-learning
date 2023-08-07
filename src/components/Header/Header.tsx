@@ -178,8 +178,17 @@ const Header: FC<HeaderProps> = (props) => {
   }
 
   const handleLogout = () => {
-    //todo
-    menuClose()
+    apis.post('/user/logout', {}).then((response: any) => {
+      const data = response.data
+      if (data.code === 200) {
+        setAlertConfig({
+          message: data.message,
+          type: Enums.AlertType.SUCCESS,
+          show: true,
+        })
+      }
+      menuClose()
+    })
   }
 
   const WeChatIcon = createSvgIcon(<WeChat />, 'WeChatIcon')
