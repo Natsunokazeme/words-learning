@@ -4,7 +4,7 @@ let requestCount = 0;
 
 
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:3010',
+  baseURL: 'http://34.92.228.125:3010',
   timeout: 20000,
 });
 
