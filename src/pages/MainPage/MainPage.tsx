@@ -1,16 +1,15 @@
 import Header from '../../components/Header/Header'
 import './MainPage.scss'
 import Clock from '../../components/Clock/Clock'
-import {useEffect} from 'react'
-import dayjs from 'dayjs'
-import localFormat from 'dayjs/plugin/localizedFormat'
-import 'dayjs/locale/zh-cn'
+import {useEffect, useState} from 'react'
+import dayjs from './../../utils/dayjs'
 
 const MainPage = (props: any) => {
-  const lastTime = localStorage.getItem('lastTime') ?? new Date().toISOString()
+  const [formattedTime, setFormattedTime] = useState('')
   useEffect(() => {
-    dayjs.extend(localFormat)
-    dayjs.locale('zh-cn')
+    const lastTime =
+      localStorage.getItem('lastTime') ?? new Date().toISOString()
+    setFormattedTime(dayjs(lastTime).format('llll'))
   }, [])
 
   return (
@@ -34,7 +33,7 @@ const MainPage = (props: any) => {
         )
       })} */}
       <div className='main-body'>
-        <div>上一次打开时间:{dayjs(lastTime).format('LLLL')}</div>
+        <div>上一次打开时间:{formattedTime}</div>
         <Clock></Clock>
         <a href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'>magic</a>
       </div>

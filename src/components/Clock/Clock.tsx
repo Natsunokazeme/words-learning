@@ -1,9 +1,7 @@
 import './Clock.scss'
-import React, {useState} from 'react'
+import React, {useMemo, useState} from 'react'
 import {useEffect} from 'react'
-import dayjs from 'dayjs'
-import localFormat from 'dayjs/plugin/localizedFormat'
-import 'dayjs/locale/zh-cn'
+import dayjs from './../../utils/dayjs'
 
 const Clock = () => {
   const [curTime, setCurTime] = useState(new Date())
@@ -15,15 +13,22 @@ const Clock = () => {
   )
 
   useEffect(() => {
-    dayjs.extend(localFormat)
-    dayjs.locale('zh-cn')
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       setCurTime(new Date())
     }, 1000)
     return () => {
-      localStorage.setItem('lastTime', curTime.toISOString())
+      clearInterval(intervalId)
+      setCurTime((curTime) => {
+        localStorage.setItem('curTime', curTime.toString())
+        return curTime
+      })
     }
   }, [])
+
+  const formattedDate = useMemo(() => {
+    return dayjs(curTime).format('LLLL')
+    //todo: 优化,curTime只展示到分钟
+  }, [curTime])
 
   const circleElements = (
     size: number,
@@ -53,9 +58,8 @@ const Clock = () => {
 
   return (
     <div className='clock-wrapper'>
-      <h1 className='date'>{dayjs(curTime).format('LLLL')}</h1>
+      <h1 className='date'>{formattedDate}</h1>
       <div className='clock'>
-        {maxSize}
         <div className='seconds'>
           {circleElements(60, (40 / 100) * maxSize, curTime.getSeconds(), '秒')}
         </div>
