@@ -1,5 +1,5 @@
 import './Clock.scss'
-import React, {useMemo, useState} from 'react'
+import {useMemo, useRef, useState} from 'react'
 import {useEffect} from 'react'
 import dayjs from './../../utils/dayjs'
 
@@ -11,6 +11,8 @@ const Clock = () => {
       : window.innerWidth,
     250
   )
+
+  const currentTime = useRef(new Date())
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -25,29 +27,25 @@ const Clock = () => {
     }
   }, [])
 
-  const formattedDate = useMemo(() => {
-    return dayjs(curTime).format('LLLL')
-    //todo: 优化,curTime只展示到分钟
-  }, [curTime])
-
   const circleElements = (
     size: number,
     radius: number,
-    accurate: number,
-    label?: string
+    initIndex: number,
+    label?: string,
+    highLightIndex?: number
   ) =>
     Array.from({length: size}, (_, index) => (
       <div
         className='inline-block bg-transparent w-16 h-4 absolute top-0 bottom-0 left-0 right-0 m-auto transition-transform border-0 will-change-transform'
         style={{
-          color: index === accurate ? 'white' : 'grey',
-          transitionDuration: accurate === 0 ? '0s' : '1s',
+          color: index === highLightIndex ? 'white' : 'grey',
           transform: `translate(${
-            Math.sin(((index - accurate) / size + 1 / 4) * 2 * Math.PI) * radius
+            Math.sin(((index - initIndex) / size + 1 / 4) * 2 * Math.PI) *
+            radius
           }px,${
-            Math.cos(((index - accurate) / size + 1 / 4) * 2 * Math.PI) *
+            Math.cos(((index - initIndex) / size + 1 / 4) * 2 * Math.PI) *
             -radius
-          }px) rotate(${(index - accurate) / size}turn)`,
+          }px) rotate(${(index - initIndex) / size}turn)`,
         }}
         key={index}
       >
@@ -56,19 +54,54 @@ const Clock = () => {
       </div>
     ))
 
+  const formattedDate = useMemo(() => {
+    return dayjs(curTime).format('LLLL')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [curTime.getMinutes()])
+
+  const seconds = useMemo(() => {
+    console.log(curTime.getSeconds())
+    return circleElements(
+      60,
+      (40 / 100) * maxSize,
+      currentTime.current.getSeconds(),
+      '秒',
+      curTime.getSeconds()
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [curTime.getSeconds(), maxSize])
+
+  const minutes = useMemo(() => {
+    // +1 to beautify the animation
+    return circleElements(
+      60,
+      (32 / 100) * maxSize,
+      currentTime.current.getMinutes() + 1,
+      '分',
+      curTime.getMinutes()
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [curTime.getMinutes(), maxSize])
+
+  const hours = useMemo(() => {
+    // +1 to beautify the animation
+    return circleElements(
+      24,
+      (16 / 100) * maxSize,
+      currentTime.current.getHours() + 1,
+      '时',
+      curTime.getHours()
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [curTime.getHours(), maxSize])
+
   return (
     <div className='clock-wrapper'>
       <h1 className='date'>{formattedDate}</h1>
       <div className='clock'>
-        <div className='seconds'>
-          {circleElements(60, (40 / 100) * maxSize, curTime.getSeconds(), '秒')}
-        </div>
-        <div className='minutes'>
-          {circleElements(60, (32 / 100) * maxSize, curTime.getMinutes(), '分')}
-        </div>
-        <div className='hours'>
-          {circleElements(24, (16 / 100) * maxSize, curTime.getHours(), '时')}
-        </div>
+        <div className='seconds'>{seconds}</div>
+        <div className='minutes'>{minutes}</div>
+        <div className='hours'>{hours}</div>
       </div>
     </div>
   )
