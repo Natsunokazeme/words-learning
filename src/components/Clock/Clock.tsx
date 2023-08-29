@@ -31,14 +31,21 @@ const Clock = () => {
     size: number,
     radius: number,
     initIndex: number,
-    label?: string,
-    highLightIndex?: number
+    config?: {
+      label?: string
+      highLightIndex?: number
+      hightLightColor?: string
+      color?: string
+    }
   ) =>
     Array.from({length: size}, (_, index) => (
       <div
         className='inline-block bg-transparent w-16 h-4 absolute top-0 bottom-0 left-0 right-0 m-auto transition-transform border-0 will-change-transform'
         style={{
-          color: index === highLightIndex ? 'white' : 'grey',
+          color:
+            index === config?.highLightIndex
+              ? config?.hightLightColor ?? 'white'
+              : config?.color ?? 'grey',
           transform: `translate(${
             Math.sin(((index - initIndex) / size + 1 / 4) * 2 * Math.PI) *
             radius
@@ -50,7 +57,7 @@ const Clock = () => {
         key={index}
       >
         {index.toString().padStart(2, '0')}
-        {label}
+        {config?.label}
       </div>
     ))
 
@@ -60,13 +67,15 @@ const Clock = () => {
   }, [curTime.getMinutes()])
 
   const seconds = useMemo(() => {
-    console.log(curTime.getSeconds())
     return circleElements(
       60,
       (40 / 100) * maxSize,
       currentTime.current.getSeconds(),
-      '秒',
-      curTime.getSeconds()
+      {
+        label: '秒',
+        highLightIndex: curTime.getSeconds(),
+        hightLightColor: 'var(--secondary-theme-color)',
+      }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [curTime.getSeconds(), maxSize])
@@ -77,8 +86,11 @@ const Clock = () => {
       60,
       (32 / 100) * maxSize,
       currentTime.current.getMinutes() + 1,
-      '分',
-      curTime.getMinutes()
+      {
+        label: '分',
+        highLightIndex: curTime.getMinutes(),
+        hightLightColor: 'var(--secondary-theme-color)',
+      }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [curTime.getMinutes(), maxSize])
@@ -88,9 +100,12 @@ const Clock = () => {
     return circleElements(
       24,
       (16 / 100) * maxSize,
-      currentTime.current.getHours() + 1,
-      '时',
-      curTime.getHours()
+      currentTime.current.getHours(),
+      {
+        label: '时',
+        highLightIndex: curTime.getHours(),
+        hightLightColor: 'var(--secondary-theme-color)',
+      }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [curTime.getHours(), maxSize])
