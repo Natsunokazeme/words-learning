@@ -1,5 +1,6 @@
 .App {
   background-color: var(--main-bg-color);
+  @apply h-screen;
   color: var(--main-color);
   transition: background-color 0.5s ease, color 0.5s ease;
   &.light-mode {
