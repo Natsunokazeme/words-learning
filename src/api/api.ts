@@ -1,4 +1,6 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+
+interface AxiosConfig extends Omit<AxiosRequestConfig, 'data' | 'baseUrl' | 'url' | 'timeout' | 'method'> {}
 
 let requestCount = 0;
 
@@ -24,7 +26,6 @@ axiosInstance.interceptors.request.use(
       // show loading
       document.dispatchEvent(new CustomEvent('ShowLoading', { detail: true }));
     }
-    //todo set config and add loading
     // const token = localStorage.getItem('token');
     // if (token) {
     //   config.headers.Authorization = `Bearer ${token}`;
@@ -48,19 +49,19 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-export const get = <T>(url: string, config?: any): Promise<T> => {
+export const get = <T>(url: string, config?: AxiosConfig): Promise<T> => {
   return axiosInstance.get(url, config);
 };
 
-export const post = <T>(url: string, data?: any, config?: any): Promise<T> => {
+export const post = <T>(url: string, data?: any, config?: AxiosConfig): Promise<T> => {
   return axiosInstance.post(url, data, config);
 };
 
-export const put = <T>(url: string, data?: any, config?: any): Promise<T> => {
+export const put = <T>(url: string, data?: any, config?: AxiosConfig): Promise<T> => {
   return axiosInstance.put(url, data, config);
 };
 
-export const del = <T>(url: string, config?: any): Promise<T> => {
+export const del = <T>(url: string, config?: AxiosConfig): Promise<T> => {
   return axiosInstance.delete(url, config);
 };
 

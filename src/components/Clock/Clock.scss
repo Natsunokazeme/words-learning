@@ -1,3 +1,11 @@
+@keyframes rotate {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
 .clock-wrapper {
   .date {
     @apply font-bold text-center text-2xl;
@@ -10,6 +18,15 @@
       @apply rounded-full aspect-square absolute m-auto top-0 bottom-0 left-0 right-0;
       font-size: clamp(4px, 2vw, 20px);
       width: clamp(300px, 50vw, 800px);
+    }
+    .hours {
+      animation: rotate 43200s linear infinite;
+    }
+    .minutes {
+      animation: rotate 3600s linear infinite;
+    }
+    .seconds {
+      animation: rotate 60s linear infinite;
     }
   }
 }

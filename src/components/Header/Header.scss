@@ -1,0 +1,24 @@
+.header {
+  .MuiSwitch-root {
+    @apply h-12 items-center;
+    .MuiSwitch-switchBase {
+      @apply bg-gray-300 p-0.5 top-3;
+      &:hover {
+        @apply bg-gray-50;
+      }
+      .MuiSwitch-input {
+        display: none;
+      }
+      &.Mui-checked {
+        transform: translateX(34px);
+        & + .MuiSwitch-track {
+          background-color: var(--main-bg-color);
+        }
+      }
+    }
+    .MuiSwitch-track {
+      background-color: var(--main-day-bg-color);
+      @apply h-4;
+    }
+  }
+}
