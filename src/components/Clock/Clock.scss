@@ -19,12 +19,6 @@
       font-size: clamp(4px, 2vw, 20px);
       width: clamp(300px, 50vw, 800px);
     }
-    .hours {
-      animation: rotate 43200s linear infinite;
-    }
-    .minutes {
-      animation: rotate 3600s linear infinite;
-    }
     .seconds {
       animation: rotate 60s linear infinite;
     }

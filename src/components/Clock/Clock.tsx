@@ -40,7 +40,7 @@ const Clock = () => {
   ) =>
     Array.from({length: size}, (_, index) => (
       <div
-        className='inline-block bg-transparent w-16 h-4 absolute top-0 bottom-0 left-0 right-0 m-auto transition-transform border-0 will-change-transform'
+        className='inline-block bg-transparent w-16 h-4 absolute top-0 bottom-0 left-0 right-0 m-auto transition-transform border-0 duration-[1s] will-change-transform'
         style={{
           color:
             index === config?.highLightIndex
@@ -82,31 +82,21 @@ const Clock = () => {
 
   const minutes = useMemo(() => {
     // +1 to beautify the animation
-    return circleElements(
-      60,
-      (32 / 100) * maxSize,
-      currentTime.current.getMinutes() + 1,
-      {
-        label: '分',
-        highLightIndex: curTime.getMinutes(),
-        hightLightColor: 'var(--secondary-theme-color)',
-      }
-    )
+    return circleElements(60, (32 / 100) * maxSize, curTime.getMinutes(), {
+      label: '分',
+      highLightIndex: curTime.getMinutes(),
+      hightLightColor: 'var(--secondary-theme-color)',
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [curTime.getMinutes(), maxSize])
 
   const hours = useMemo(() => {
     // +1 to beautify the animation
-    return circleElements(
-      24,
-      (16 / 100) * maxSize,
-      currentTime.current.getHours(),
-      {
-        label: '时',
-        highLightIndex: curTime.getHours(),
-        hightLightColor: 'var(--secondary-theme-color)',
-      }
-    )
+    return circleElements(24, (16 / 100) * maxSize, curTime.getHours(), {
+      label: '时',
+      highLightIndex: curTime.getHours(),
+      hightLightColor: 'var(--secondary-theme-color)',
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [curTime.getHours(), maxSize])
 
