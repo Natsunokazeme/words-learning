@@ -77,6 +77,7 @@ const ImagePage = () => {
   }
 
   const cropImage = (imgUrl: string) => {
+    //todo fix bug for cropped image
     const canvas = canvasRef.current as HTMLCanvasElement
     const ctx = canvas.getContext('2d')
     if (ctx) {
@@ -98,7 +99,7 @@ const ImagePage = () => {
         <p>Preview</p>
         <canvas ref={canvasRef} className='max-w-full'></canvas>
       </div>
-      <div className='actions flex justify-center mt-10'>
+      <div className='actions flex gap-4 justify-center mt-10'>
         <button
           onClick={() => {
             setOpenCamera(true)

@@ -1,4 +1,4 @@
-import React, {FC, useMemo, useRef, useState} from 'react'
+import React, {FC, useLayoutEffect, useRef, useState} from 'react'
 import './CameraScan.scss'
 import {useEffect} from 'react'
 import {CircularProgress, Modal} from '@mui/material'
@@ -60,7 +60,7 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
     }
   }, [cameras, prop.show])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let timeoutRef: NodeJS.Timeout
     const countDown = () => {
       if (countDownNumber > 0) {
@@ -85,6 +85,27 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
 
   //   )
   // }, [])
+
+  const videoContainer = React.useMemo(() => {
+    return (
+      <div
+        className={`camera-wrapper relative flex justify-center items-center gap-5 ${
+          loading ? 'transparent' : ''
+        }`}
+      >
+        <video
+          id='video'
+          ref={videoRef}
+          className={`max-w-full camera`}
+        ></video>
+        {countDownNumber < countDownInitTime && countDownNumber >= 0 ? (
+          <span className='count-down font-bold absolute text-white text-5xl'>
+            {countDownNumber}
+          </span>
+        ) : null}
+      </div>
+    )
+  }, [loading, countDownNumber])
 
   const startCamera = (constraints: MediaStreamConstraints) => {
     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
@@ -131,34 +152,19 @@ const CameraScan: FC<CameraScanProps> = (prop: CameraScanProps) => {
         prop.setShow(false)
       }}
       keepMounted
-      className={`camera-modal py-20 bg-black`}
+      className={`camera-modal overflow-scroll py-20 bg-black`}
     >
       <>
         {loading ? (
           <CircularProgress size={100} className='fixed left-1/2 top-1/2' />
         ) : null}
-        <div
-          className={`camera-wrapper relative flex justify-center items-center gap-5 ${
-            loading ? 'transparent' : ''
-          }`}
-        >
-          <video
-            id='video'
-            ref={videoRef}
-            className={`max-w-full camera`}
-          ></video>
-          {countDownNumber < countDownInitTime && countDownNumber >= 0 ? (
-            <span className='count-down font-bold absolute text-white text-5xl'>
-              {countDownNumber}
-            </span>
-          ) : null}
-        </div>
+        {videoContainer}
         <div className='actions flex justify-center mt-10'>
           <button
             disabled={countDownNumber !== countDownInitTime}
             className={`${
               countDownNumber !== countDownInitTime
-                ? 'hover:cursor-not-allowed'
+                ? 'hover:cursor-not-allowed '
                 : ''
             }  `}
             onClick={() => {
