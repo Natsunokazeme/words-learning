@@ -6,7 +6,7 @@ let requestCount = 0;
 
 
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: 'http://34.92.228.125:3010',
+  baseURL: process.env.REACT_APP_BASEURL,
   timeout: 20000,
 });
 

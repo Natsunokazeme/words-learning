@@ -37,6 +37,9 @@
 27. 修改密码功能，需要通过邮箱验证 (P2)
 28. 头像可以上传，上传裁剪，并且限制图片大小或后端压缩图片大小 (P4)
 29. 个人中心页面可以修改个人信息，包括昵称，邮箱，头像，密码 (P4)
+30. 微信聊天记录导出并展示 (P4)
+31. webpack 应用定制化(P1)
+32. 根据 env 变量切换不同的配置文件(P0)
 
 tech stack: react react-router tailwindcss scss cropper react-cropper mui canvas gif.js md5 axios generate-react-cli
 
