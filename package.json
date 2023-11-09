@@ -25,12 +25,15 @@
     "sass": "^1.59.3",
     "scss": "^0.2.4",
     "typescript": "^4.7.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "crypto-js": "^4.1.1",
+    "tailwindcss": "^3.3.2",
+    "@types/crypto-js": "^4.1.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -58,11 +61,10 @@
     }
   },
   "devDependencies": {
-    "@types/crypto-js": "^4.1.1",
     "autoprefixer": "^10.4.14",
-    "crypto-js": "^4.1.1",
     "postcss": "^8.4.24",
     "resolve-url-loader": "^5.0.0",
-    "tailwindcss": "^3.3.2"
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack-bundle-analyzer": "^4.9.1"
   }
 }

@@ -16,7 +16,7 @@ import SearchWrapper from '../SearchWrapper/SearchWrapper'
 import LoginDialog from '../LoginDialog/LoginDialog'
 import {useNavigate} from 'react-router-dom'
 import * as apis from '../../api/api'
-import CryptoJS from 'crypto-js'
+import MD5 from 'crypto-js/md5'
 import * as Enums from '../../enums'
 import SnackAlert from '../SnackAlert/SnackAlert'
 import TranslateIcon from '@mui/icons-material/Translate'
@@ -58,7 +58,7 @@ const Header: FC<HeaderProps> = (props) => {
   }, [theme])
 
   const handleLogin = (username: string, password: string) => {
-    const hashToken = CryptoJS.MD5(password).toString()
+    const hashToken = MD5(password).toString()
 
     apis
       .post('user/login', {
